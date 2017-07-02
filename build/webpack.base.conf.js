@@ -39,7 +39,7 @@ module.exports = {
       }
     },{
       test: /\.js$/,
-      loader: 'babel-loader',
+      loader: 'babel-loader?cacheDirectory',
       include: PATHS.SRC
     }, {
       test: /\.(png|jpe?g|gif|svg)$/,
