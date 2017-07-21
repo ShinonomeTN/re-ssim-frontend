@@ -24,9 +24,9 @@ function ruleGen(ext, isForVueLoader) {
 function styleRulesGen(isForVueLoader) {
   var rules = isForVueLoader ? {} : [];
   Object.keys(LOADERS).forEach(function (ext) {
-    isForVueLoader ?
-      rules[ext] = ruleGen(ext, true) :
-      rules.push({ test: new RegExp('\\.' + ext + '$'), use: ruleGen(ext) });
+    isForVueLoader
+      ? rules[ext] = ruleGen(ext, true)
+      : rules.push({ test: new RegExp('\\.' + ext + '$'), use: ruleGen(ext) });
   });
   return rules;
 }
