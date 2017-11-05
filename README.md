@@ -17,7 +17,7 @@ Vue 2.x 阉割掉了很多相当有用的特性，还动不动就扯“状态管
 尤其是看到了 [MobX](https://github.com/mobxjs/mobx) 的盛行，更让我意识到**组件化状态自包含**才是正道  
 谈及**全局**状态管理，在实际项目中我更倾向于使用 **根组件** 或者 **URL**
 
-> URL 本身就是一个全局的状态容器，详见 Vue Demo 文档：[URL 是单页应用的精华](https://kenberkeley.github.io/vue-demo/dist/docs/zh-cn/development/URL-is-soul-of-SPA.html)
+> URL 本身就是一个全局的状态容器，详见 Vue Demo 文档：[URL 是单页应用的精华](https://kenberkeley.github.io/vue-demo/docs/_book/zh-cn/development/URL-is-soul-of-SPA.html)
 
 让我着手折腾 Vue2 脚手架的，是最近的一次独立组件重构经历
 
