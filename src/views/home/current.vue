@@ -6,9 +6,9 @@
                 <h3><small>2017-2018 学年第一学期</small><br><span>7 月 1 日，第二十周 星期一</span></h3>
             </div>
             <div class="list-group">
-                <a href="#" class="list-group-item">班级课表</a>
-                <a href="#" class="list-group-item">教师课表</a>
-                <a href="#" class="list-group-item">课程一览</a>
+                <router-link to="/courses/class" class="list-group-item">班级课表</router-link>
+                <router-link to="/courses/teacher" class="list-group-item">教师课表</router-link>
+                <router-link to="/courses" class="list-group-item">课程一览</router-link>
             </div>
             <div class="panel-footer">
                 <router-link to="/histories" class="btn btn-default btn-sm pull-right">历史学期</router-link>

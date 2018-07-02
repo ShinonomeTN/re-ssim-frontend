@@ -1,27 +1,13 @@
 // 不同功能模块的路由应代码分离
-import page1 from './page1'
-import page2 from './page2'
+import homepage from "./homepage"
+import courseQuery from './courseQuery'
 
-export default [{
-    path: '/index',
-    alias: '/',
-    component: require('@/views/home/'),
-    children: [{
-      path: "",
-      component(resolve) {
-        require(["@/views/home/current"], resolve)
-      }
-    }, {
-      path: "histories",
-      component(resolve) {
-        require(["@/views/home/histories"], resolve)
-      }
-    }]
-  },
+export default [
+  // Homepage
+  homepage,
 
-  page1,
-
-  page2,
+  // Course queries
+  courseQuery,
 
   { // 404 置后
     path: '*',

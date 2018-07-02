@@ -26,6 +26,7 @@
     'space-before-blocks' : 1,
     'comma-spacing' : 1,
     'indent' : 1,
-    'eol-last' : 1
+    'eol-last' : 1,
+    'no-trailing-spaces' : 1
   }
 }
