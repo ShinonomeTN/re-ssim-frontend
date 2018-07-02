@@ -1,0 +1,11 @@
+.welcome-panel-header > h3 small {
+    display: inline-block;
+}
+
+.welcome-panel-header > h3 {
+    margin-top: 0%
+}
+
+.welcome-panel-header > h3 > * {
+    margin: 3pt;
+}

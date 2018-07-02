@@ -2,13 +2,21 @@
 import page1 from './page1'
 import page2 from './page2'
 
-export default [
-  {
-    path: '/home',
+export default [{
+    path: '/index',
     alias: '/',
-    component (resolve) {
-      require(['@/views/home'], resolve)
-    }
+    component: require('@/views/home/'),
+    children: [{
+      path: "",
+      component(resolve) {
+        require(["@/views/home/current"], resolve)
+      }
+    }, {
+      path: "histories",
+      component(resolve) {
+        require(["@/views/home/histories"], resolve)
+      }
+    }]
   },
 
   page1,
@@ -18,7 +26,7 @@ export default [
   { // 404 置后
     path: '*',
     component: {
-      beforeCreate () {
+      beforeCreate() {
         window.swal({
           type: 'warning',
           title: '404 NOT FOUND',
