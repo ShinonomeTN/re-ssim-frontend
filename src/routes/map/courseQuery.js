@@ -3,11 +3,16 @@ export default {
   component: require('@/views/courseQuery/'),
   children: [{
     path: 'class',
-    component (resolve) {
+    component(resolve) {
       require(['@/views/courseQuery/classQuery'], resolve)
     }
-  },{
-    path : '',
-    alias : '/courses/class'
+  }, {
+    path: 'teacher',
+    component(resolve) {
+      require(['@/views/courseQuery/teacherQuery'], resolve)
+    }
+  }, {
+    path: '',
+    alias: '/courses/class'
   }]
 }

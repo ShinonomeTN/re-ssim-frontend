@@ -4,29 +4,20 @@
             <div class="panel panel-primary">
                 <div class="panel-body">
                     <div class="page-head">
-                        <h3>班级课表</h3>
+                        <h3>教师课表</h3>
                         <hr>
                     </div>
                     <div class="form-group">
-                        <label>班级</label>
-                        <select class="selectpicker form-control">
-                            <option value="a">aaaaaaa</option>
-                            <option value="b">bbbbbbb</option>
-                        </select>
+                        <label>教师名称</label>
+                        <input type="text" class="form-control">
                     </div>
                     <div class="form-group">
                         <label>周</label>
-                        <select class="selectpicker form-control">
-                            <option value="a">aaaaaaa</option>
-                            <option value="b">bbbbbbb</option>
-                        </select>
+                        <input type="number" class="form-control">
                     </div>
                     <div class="form-group">
                         <label>排除课程类型</label>
-                        <select class="selectpicker form-control">
-                            <option value="a">aaaaaaa</option>
-                            <option value="b">bbbbbbb</option>
-                        </select>
+                        <select class="form-control"></select>
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -39,6 +30,6 @@
 </template>
 <script>
 export default {
-  name: "classQuery"
+  name: "teacherQuery"
 };
 </script>
