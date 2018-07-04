@@ -9,28 +9,19 @@
                     </div>
                     <div class="form-group">
                         <label>班级</label>
-                        <select class="selectpicker form-control">
-                            <option value="a">aaaaaaa</option>
-                            <option value="b">bbbbbbb</option>
-                        </select>
+                        <bs-selector :options="classList" v-model="queryForm.term"></bs-selector>
                     </div>
                     <div class="form-group">
                         <label>周</label>
-                        <select class="selectpicker form-control">
-                            <option value="a">aaaaaaa</option>
-                            <option value="b">bbbbbbb</option>
-                        </select>
+                         <bs-selector :options="weekList" v-model="queryForm.week"></bs-selector>
                     </div>
                     <div class="form-group">
                         <label>排除课程类型</label>
-                        <select class="selectpicker form-control">
-                            <option value="a">aaaaaaa</option>
-                            <option value="b">bbbbbbb</option>
-                        </select>
+                        <bs-selector :options="courseTypeList" v-model="queryForm.excludedTypes" multiple></bs-selector>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button class="btn btn-success btn-block">查询</button>
+                    <button class="btn btn-success btn-block" @click="formSubmit(queryForm)">查询</button>
                     <router-link to="/" class="btn btn-block btn-default">返回</router-link>
                 </div>
             </div>
@@ -38,7 +29,58 @@
     </div>
 </template>
 <script>
+import axios from "axios";
+
 export default {
-  name: "classQuery"
+  name: "classQuery",
+  data: () => {
+    return {
+      classList: [],
+      weekList: ["1", "2", "3", "4"],
+      courseTypeList: ["种类 1", "种类 2", "种类 3", "种类 4", "种类 5"],
+      queryForm: {
+        term: null,
+        week: null,
+        excludedTypes: null
+      }
+    };
+  },
+
+  mounted() {
+    axios
+      .get(
+        "/api/term/2017-2018%e5%ad%a6%e5%b9%b4%e7%ac%ac%e4%ba%8c%e5%ad%a6%e6%9c%9f?class"
+      )
+      .then(response => {
+        this.classList = response.data.classes;
+      });
+
+    axios
+      .get(
+        "/api/term/2017-2018%e5%ad%a6%e5%b9%b4%e7%ac%ac%e4%ba%8c%e5%ad%a6%e6%9c%9f?weekRange"
+      )
+      .then(response => {
+        const weekRange = response.data;
+        var arr = [];
+        for (var i = weekRange.min; i <= weekRange.max; i++) {
+          arr.push(i);
+        }
+        this.weekList = arr;
+      });
+
+    axios
+      .get(
+        "/api/term/2017-2018%e5%ad%a6%e5%b9%b4%e7%ac%ac%e4%ba%8c%e5%ad%a6%e6%9c%9f?classType"
+      )
+      .then(response => {
+        this.courseTypeList = response.data.classTypes;
+      });
+  },
+
+  methods: {
+    formSubmit(formData) {
+      console.log(formData);
+    }
+  }
 };
 </script>

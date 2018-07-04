@@ -1,9 +1,9 @@
 <template>
 <div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
+    <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
         <div class="panel panel-primary">
             <div class="panel-body welcome-panel-header">
-                <h3><small>2017-2018 学年第一学期</small><br><span>7 月 1 日，第二十周 星期一</span></h3>
+                <h3><small>{{termName}}</small><br><span>7 月 1 日，第{{termWeek}} 星期一</span></h3>
             </div>
             <div class="list-group">
                 <router-link to="/courses/class" class="list-group-item">班级课表</router-link>
@@ -22,6 +22,12 @@
 
 <script>
 export default {
-    name : "current"
+    name : "current",
+    data : () => {
+        return {
+            termName : "2017-2018学年第一学期",
+            termWeek : "二十周"
+        }
+    }
 }
 </script>

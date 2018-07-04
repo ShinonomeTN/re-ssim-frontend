@@ -1,6 +1,6 @@
 <template>
 <div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
+    <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
         <div class="panel panel-primary">
             <div class="panel-body">
                 <h3>历史学期</h3>

@@ -3,6 +3,10 @@ import Vue from 'vue'
 import router from '@/routes/'
 import App from '@/components/App'
 
+import Selector from "@/components/Selector"
+
+Vue.component("bs-selector", Selector)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
