@@ -9,7 +9,7 @@
                     </div>
                     <div class="form-group">
                         <label>班级</label>
-                        <bs-selector :options="classList" v-model="queryForm.term"></bs-selector>
+                        <bs-selector :options="classList" v-model="queryForm.term" liveSearch="true"></bs-selector>
                     </div>
                     <div class="form-group">
                         <label>周</label>
