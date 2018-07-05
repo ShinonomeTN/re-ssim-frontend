@@ -3,9 +3,9 @@ import Vue from 'vue'
 import router from '@/routes/'
 import App from '@/components/App'
 
-import Selector from "@/components/Selector"
+import vSelector from "vue-select"
 
-Vue.component("bs-selector", Selector)
+Vue.component("v-select",vSelector)
 
 /* eslint-disable no-new */
 new Vue({
