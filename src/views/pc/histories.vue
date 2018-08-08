@@ -10,18 +10,14 @@
             <h3>历史学期</h3>
           </div>
           <div class="list-group">
-            <a v-for="(item,index) in terms" :key="index" class="list-group-item">
+            <router-link :to="`/pc/term/${item.name}`" v-for="(item,index) in terms" :key="index" class="list-group-item">
               <div class="pull-left">{{item.name}}</div>
               <div class="pull-right">{{item.courseCount}} 门课程</div>
               <div class="clearfix"></div>
-            </a>
-            <!-- <a href="#" class="list-group-item">2017-2018 年第一学期</a>
-                      <a href="#" class="list-group-item">2016-2017 年第一学期</a>
-                      <a href="#" class="list-group-item">2015-2016 年第一学期</a>
-                      <a href="#" class="list-group-item">2014-2015 年第一学期</a> -->
+            </router-link>
           </div>
           <div class="panel-footer">
-            <router-link to="/" class="btn btn-default btn-sm pull-right">返回</router-link>
+            <button @click="$router.go(-1)" class="btn btn-default pull-right">返回</button>
             <div class="clearfix">
             </div>
           </div>
@@ -41,7 +37,7 @@
   import axios from "axios";
   
   export default {
-    name: "histories",
+    name: "pc-histories",
     data: () => {
       return {
         terms: []

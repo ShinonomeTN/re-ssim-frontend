@@ -1,7 +1,23 @@
 import axios from "axios";
 
-export default {
+var apiParamsSerializer = function(params) {
+  var parts = [];
+    for (var key in params) {
+      if (params.hasOwnProperty(key)) {
+        var obj = params[key];
+        if ($.isArray(obj)) {
+          for (var idx = 0; idx < obj.length; idx++) {
+            parts.push(key + "=" + encodeURIComponent(obj[idx]));
+          }
+        } else {
+          parts.push(key + "=" + encodeURIComponent(obj));
+        }
+      }
+    }
+    return parts.join("&");
+};
 
+export default {
   newRequest(url) {
     return axios.request({
       method: "GET",
@@ -9,6 +25,15 @@ export default {
       headers: {
         "Cache-Control": "no-cache"
       }
+    });
+  },
+
+  newQuery(url, params) {
+    return axios.request({
+      method: "GET",
+      url: url,
+      params: params,
+      paramsSerializer: apiParamsSerializer
     });
   },
 
@@ -26,7 +51,7 @@ export default {
   },
 
   // UserAgent and System info
-  client: (function () {
+  client: (function() {
     const ua = navigator.userAgent;
 
     const isWindowsPhone = /(?:Windows Phone)/.test(ua);
@@ -34,7 +59,10 @@ export default {
     const isAndroid = /(?:Android)/.test(ua);
     const isFireFox = /(?:Firefox)/.test(ua);
     const isChrome = /(?:Chrome|CriOS)/.test(ua);
-    const isTablet = /(?:iPad|PlayBook)/.test(ua) || (isAndroid && !/(?:Mobile)/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua));
+    const isTablet =
+      /(?:iPad|PlayBook)/.test(ua) ||
+      (isAndroid && !/(?:Mobile)/.test(ua)) ||
+      (isFireFox && /(?:Tablet)/.test(ua));
     const isPhone = /(?:iPhone)/.test(ua) && !isTablet;
     const isPc = !isPhone && !isAndroid && !isSymbian;
 
@@ -53,4 +81,4 @@ export default {
       }
     };
   })()
-}
+};

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="page-header">
-      <h1 align="center">学院与课程 <small>in {{currentCourse}}</small></h1>
+      <h1 align="center">学院与课程 <small>in {{term}}</small></h1>
     </div>
     <div class="row">
       <div class="col-sm-3">
@@ -44,14 +44,14 @@
   const groupBy = $ressim.collections.groupBy;
   
   export default {
-    props:{
-      term : String
+    name: "pc-course-list",
+    props: {
+      term: String
     },
-    name: "courseList",
     data() {
       return {
         courseList: {},
-        currentCourse: "2017-2018学年第二学期"
+        currentCourse: ""
       };
     },
     mounted() {
@@ -75,11 +75,5 @@
   hr {
     margin: 3pt 0pt;
   }
-  
-  
-  /* .rs-list {
-                overflow: auto;
-                height: 500pt;
-            } */
 </style>
 

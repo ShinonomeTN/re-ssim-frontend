@@ -11,39 +11,57 @@
 // ]
 
 export default {
-  path: '/pc',
-  component: require('@/views/pc/'),
+  path: "/pc",
+  component: require("@/views/pc/"),
   children: [
+    //
     // Homepage
+    //
     {
-      path: "",
-      component: (resolve) => require(["@/views/pc/current"], resolve)
-    },
-    {
-      path: ":term",
-      component: (resolve) => require(["@/views/pc/current"], resolve),
-      props: true
+      path: "current",
+      alias: "",
+      component: resolve => require(["@/views/pc/current"], resolve)
     },
     {
       path: "histories",
-      component: (resolve) => require(["@/views/pc/histories"], resolve)
+      component: resolve => require(["@/views/pc/histories"], resolve)
+    },
+    {
+      path: "term/:term",
+      component: resolve => require(["@/views/pc/current"], resolve),
+      props: true
     },
     //
     // Querying
     //
     {
-      path: "courses/:term",
-      component: (resolve) => require(['@/views/pc/courseList'], resolve)
+      path: "term/:term/courses",
+      component: resolve => require(["@/views/pc/courseList"], resolve),
+      props : true
     },
     {
-      path: 'class/:term',
-      component: (resolve) => require(['@/views/pc/classQuery'], resolve),
+      path: "term/:term/class",
+      component: resolve => require(["@/views/pc/classQuery"], resolve),
       props: true
     },
     {
-      path: 'teacher/:term',
-      component: (resolve) => require(['@/views/pc/teacherQuery'], resolve),
+      path: "term/:term/teacher",
+      component: resolve => require(["@/views/pc/teacherQuery"], resolve),
       props: true
+    },
+    //
+    // Result
+    //
+    {
+      name: "pcClassScheduleRoute",
+      path: "term/:term/class/:class/schedule",
+      component: resolve => require(["@/views/pc/lessonSchedule"], resolve),
+      props: route => ({
+        term: route.params.term,
+        clazz: route.params.class,
+        week: route.query.week,
+        excludedTypes: route.query.excludedTypes
+      })
     }
   ]
-}
+};

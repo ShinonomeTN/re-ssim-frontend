@@ -16,7 +16,6 @@
             </div>
             <div class="form-group">
               <label>周 ({{minWeek}}-{{maxWeek}})</label>
-              <!-- <v-select :options="weekList" v-model="queryForm.week"></v-select> -->
               <input type="number" :max="maxWeek" :min="minWeek" v-model="queryForm.week" class="form-control" :placeholder="`最小 ${minWeek} 最大 ${maxWeek}`">
             </div>
             <div class="form-group">
@@ -26,7 +25,7 @@
           </div>
           <div class="panel-footer">
             <button class="btn btn-success btn-block" @click="formSubmit(queryForm)">查询</button>
-            <router-link to="/" class="btn btn-block btn-default">返回</router-link>
+            <button @click="$router.go(-1)" class="btn btn-block btn-default">返回</button>
           </div>
         </div>
       </div>
@@ -36,63 +35,60 @@
 
 <script>
 import Utils from "@/commons/utils";
-  import axios from "axios";
-  
-  export default {
-    name: "pc-class-query",
+import axios from "axios";
 
-    props : {
-      term : String
-    },
+export default {
+  name: "pc-class-query",
 
-    data: () => {
-      return {
-        classList: [],
+  props: {
+    term: String
+  },
 
-        maxWeek: 0,
-        minWeek: 0,
-        courseTypeList: [],
-        
-        queryForm: {
-          class: null,
-          week: null,
-          excludedTypes: null
-        }
-      };
-    },
-  
-    mounted() {
-      console.log(`${this.maxWeek} <- ${this.minWeek}`);
+  data: () => {
+    return {
+      classList: [],
 
-      Utils.newRequest(`/api/term/${this.term}?class`)
-      .then(response => {
-          this.classList = response.data.classes;
-        });
-        
-  
-      Utils.newRequest(`/api/term/${this.term}?weekRange`)
-        .then(response => {
-          // this.weekRangePlaceholder = response.data;
-          this.maxWeek = response.data.max;
-          this.minWeek = response.data.min;
-  
-          console.log(`${this.maxWeek} <- ${this.minWeek}`);
-        });
-  
-      Utils.newRequest(`/api/term/${this.term}?classType`)
-        .then(response => {
-          this.courseTypeList = response.data.classTypes;
-        });
-    },
-  
-    methods: {
-      formSubmit(formData) {
-        console.log(formData);
+      maxWeek: 0,
+      minWeek: 0,
+      courseTypeList: [],
+
+      queryForm: {
+        class: null,
+        week: null,
+        excludedTypes: null
       }
-    },
-  
-    computed: {
-      
+    };
+  },
+
+  mounted() {
+    console.log(`${this.maxWeek} <- ${this.minWeek}`);
+
+    Utils.newRequest(`/api/term/${this.term}?class`).then(response => {
+      this.classList = response.data.classes;
+    });
+
+    Utils.newRequest(`/api/term/${this.term}?weekRange`).then(response => {
+      this.maxWeek = response.data.max;
+      this.minWeek = response.data.min;
+    });
+
+    Utils.newRequest(`/api/term/${this.term}?classType`).then(response => {
+      this.courseTypeList = response.data.classTypes;
+    });
+  },
+
+  methods: {
+    formSubmit(formData) {
+      this.$router.push({
+        path: `/pc/term/${this.term}/class/${this.queryForm.class}/schedule`,
+        query: {
+          week : this.queryForm.week,
+          excludedTypes : this.queryForm.excludedTypes
+        }
+      });
     }
-  };
+  },
+
+  computed: {}
+};
 </script>
