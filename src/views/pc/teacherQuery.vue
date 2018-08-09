@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       teacherList: [],
-      courseTypeList : [],
+      courseTypeList: [],
 
       maxWeek: 0,
       minWeek: 0,

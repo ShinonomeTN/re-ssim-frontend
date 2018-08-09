@@ -1,11 +1,16 @@
 /* 启动文件 */
-import Vue from 'vue'
-import router from '@/routes/'
-import App from '@/components/App'
+import Vue from 'vue';
+import router from '@/routes/';
+import App from '@/components/App';
 
-import vSelector from "vue-select"
+// Vue selector
+import vSelector from "vue-select";
+Vue.component("v-select", vSelector)
 
-Vue.component("v-select",vSelector)
+// MuseUI
+import MuseUI from 'muse-ui';
+import 'muse-ui/dist/muse-ui.css';
+Vue.use(MuseUI);
 
 /* eslint-disable no-new */
 new Vue({
