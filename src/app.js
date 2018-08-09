@@ -10,6 +10,7 @@ Vue.component("v-select", vSelector)
 // MuseUI
 import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
+import 'typeface-roboto';
 Vue.use(MuseUI);
 
 /* eslint-disable no-new */

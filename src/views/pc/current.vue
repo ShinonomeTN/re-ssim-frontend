@@ -1,65 +1,158 @@
 <template>
-  <div>
-    <div class="page-header">
-      <h1 align="center">简单课表查询 <small>for 广东岭南职业技术学院</small></h1>
-    </div>
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-        <div class="panel panel-primary">
-          <div class="panel-heading welcome-panel-header">
-            <div v-if="!term">
-              <h3>
-                <small style="color : white">{{currentTerm}}</small><br><span>7 月 1 日，第{{termWeek}} 星期一</span>
-              </h3>
-            </div>
-            <div v-else>
-              <h3>
-                <small style="color : white">历史学期</small><br><span>{{currentTerm}}</span>
-              </h3>
-            </div>
-          </div>
-          <div class="list-group">
-            <router-link v-for="(item,index) in functionList" :key="index" :to="item.to(currentTerm)" class="list-group-item">{{item.title}}</router-link>
-          </div>
-          <div class="panel-footer">
-            <router-link to="/pc/histories" class="btn btn-default pull-right">历史学期</router-link>
-            <div class="clearfix">
-            </div>
+  <mu-container style="margin-top:100pt">
+    <div class="col-md-12 col-lg-8 offset-lg-2 ">
+      <mu-paper :z-depth='1'>
+        <mu-appbar style="width: 100%;" title="简单课表查询" color="primary">
+          <mu-button icon slot="left">
+            <mu-icon value="event"></mu-icon>
+          </mu-button>
+          <mu-button flat slot="right" v-if="menuState === 'select_history'" @click="backToFunctionList()">
+            <mu-icon left value="arrow_back"></mu-icon>
+            返回
+          </mu-button>
+        </mu-appbar>
+
+        <!-- Select function  -->
+        <div class="container-fluid" style="padding-top: 10pt; padding-bottom: 10pt;" v-if="menuState === 'select_function'">
+          <div class="row align-items-center">
+            <mu-col span="6">
+              <div v-if="!term">
+                <h1 style="text-align:center">{{currentTerm}}<br>
+                  <small>{{`7 月 1 日，第${termWeek} 星期一`}}</small>
+                </h1>
+              </div>
+              <div v-else>
+                <h1 style="text-align:center">{{currentTerm}}<br>
+                  <small>历史学期</small>
+                </h1>
+              </div>
+            </mu-col>
+            <mu-col span='6' style="border-left: 1pt solid lightgray;">
+              <div>
+                <mu-list>
+                  <mu-list-item button v-for="(item,index) in functionList" :key="index" @click="$router.push(item.to(currentTerm))" class="list-group-item">
+                    <mu-list-item-action>
+                      <mu-icon :value="item.icon"></mu-icon>
+                    </mu-list-item-action>
+                    <mu-list-item-title>{{item.title}}</mu-list-item-title>
+                  </mu-list-item>
+                  <mu-list-item button @click="showSelectTerm()" class="list-group-item">
+                    <mu-list-item-action>
+                      <mu-icon value="history"></mu-icon>
+                    </mu-list-item-action>
+                    <mu-list-item-title>历史学期</mu-list-item-title>
+                  </mu-list-item>
+                </mu-list>
+              </div>
+            </mu-col>
           </div>
         </div>
-      </div>
+
+        <!-- Select history -->
+        <div class="container-fluid" style="padding-top: 10pt; padding-bottom: 10pt" v-if="menuState === 'select_history'">
+          <div class="row align-items-center">
+            <mu-col span="6" style="text-align:center">
+              <mu-icon value="history" size="56" center></mu-icon>
+              <h1 style="margin-top:0">选择历史学期</h1>
+            </mu-col>
+            <mu-col span='6' style="border-left: 1pt solid lightgray;">
+              <div align="center">
+                <mu-circular-progress class="demo-circular-progress " :size="56" v-if="isLoadingTermHistories"></mu-circular-progress>
+                <div v-else style="height:208px; overflow-y: auto">
+                  <mu-list>
+                    <mu-list-item button v-for="(item,index) in termHistories" :key="index" @click="toTerm(item.name)" class="list-group-item">
+                      <mu-list-item-action v-if="item.name === currentTerm">
+                        <mu-badge content="当前" color="primary"></mu-badge>
+                      </mu-list-item-action>
+                      <mu-list-item-title>{{item.name}}</mu-list-item-title>
+                      <mu-list-item-action>
+                        <mu-badge :content="`${item.courseCount}`" color="secondary"></mu-badge>
+                      </mu-list-item-action>
+                    </mu-list-item>
+                  </mu-list>
+                </div>
+              </div>
+            </mu-col>
+          </div>
+        </div>
+      </mu-paper>
     </div>
-  </div>
+  </mu-container>
 </template>
 
 <script>
-  export default {
-    name: "pc-current-term",
-  
-    props: {
-      term: String
+import Utils from "@/commons/utils";
+
+export default {
+  name: "pc-current-term",
+
+  props: {
+    term: String
+  },
+
+  data: () => {
+    return {
+      termWeek: "二十周",
+
+      menuState: "select_function",
+
+      termHistories: [],
+      isLoadingTermHistories: false,
+
+      // The function menu
+      functionList: [
+        {
+          title: "班级课表",
+          to: termName => `/pc/term/${termName}/class`,
+          icon: "face"
+        },
+        {
+          title: "教师课表",
+          to: termName => `/pc/term/${termName}/teacher`,
+          icon: "assignment_ind"
+        },
+        {
+          title: "课程一览",
+          to: termName => `/pc/term/${termName}/courses`,
+          icon: "dashboard"
+        }
+      ]
+    };
+  },
+
+  computed: {
+    currentTerm: () => (this.term ? this.term : "2017-2018学年第二学期")
+  },
+
+  methods: {
+    //
+    // UI status changing
+    //
+    showSelectTerm() {
+      this.menuState = "select_history";
+
+      if (this.termHistories.length <= 0) {
+        this.isLoadingTermHistories = true;
+        Utils.newRequest("/api/term").then(r => {
+          this.isLoadingTermHistories = false;
+          this.termHistories = r.data;
+        });
+      }
     },
-  
-    data: () => {
-      return {
-        termWeek: "二十周",
-        functionList: [{
-            title: "班级课表",
-            to: (termName) => `/pc/term/${termName}/class`
-          },
-          {
-            title: "教师课表",
-            to: (termName) => `/pc/term/${termName}/teacher`
-          },
-          {
-            title: "课程一览",
-            to: (termName) => `/pc/term/${termName}/courses`
-          }
-        ]
-      };
+
+    toTerm(termName) {
+      if (termName === this.currentTerm) {
+        this.$router.push("/pc");
+      } else {
+        this.$router.push(`/pc/term/${termName}`);
+      }
+
+      this.backToFunctionList();
     },
-    computed: {
-      currentTerm: () => (this.term ? this.term : "2017-2018学年第二学期")
+
+    backToFunctionList() {
+      this.menuState = "select_function";
     }
-  };
+  }
+};
 </script>
