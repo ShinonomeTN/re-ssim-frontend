@@ -26,16 +26,16 @@ const routeMapping = [
   {
     path: '*',
     component: {
-      beforeCreate() {
-        window.swal({
-          type: 'warning',
-          title: '功能或页面不存在',
-          timer: 1500,
-          showConfirmButton: false
-        })
-        this.$router.replace('/')
-      },
-      template: '<div></div>'
+      // beforeCreate() {
+      //   window.swal({
+      //     type: 'warning',
+      //     title: '功能或页面不存在',
+      //     timer: 1500,
+      //     showConfirmButton: false
+      //   })
+      //   this.$router.replace('/')
+      // },
+      template: '<div>Ooops, nothing here</div>'
     }
   }
 ]
