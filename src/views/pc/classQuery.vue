@@ -1,31 +1,53 @@
 <template>
-  <div>
-    <div class="page-header">
-      <h1 align="center">班级课表 <small>in {{term}}</small></h1>
-    </div>
+  <div class="container" style="margin-top:10pt">
     <div class="row">
-      <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3>班级课表</h3>
+      <!-- Term info, class choosing and exclude type choosing -->
+      <div class="col col-lg-4">
+        <mu-paper :z-depth='1'>
+          <mu-appbar style="width: 100%;" color="primary">
+            <div>
+              <p>班级课表</p>
+            </div>
+            <mu-button flat slot="right" @click="$router.go(-1)">
+              <mu-icon left value="arrow_back"></mu-icon>
+              返回
+            </mu-button>
+          </mu-appbar>
+          <div style="padding: 3pt 10pt">
+            <div>
+              <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
+              <mu-button full-width >{{term}}</mu-button>
+            </div>
+            
+            <div>
+              <div style="padding:5pt 0pt; font-size: 17px">班级</div>
+              <class-choosing :term="term"></class-choosing>
+            </div>
+
+            <div>
+              <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
+              <mu-select v-model="queryForm.excludedTypes" chips multiple full-width no-data-text="空">
+                  <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
+                </mu-select>
+            </div>
           </div>
-          <div class="panel-body">
-            <div class="form-group">
-              <label>班级</label>
-              <v-select :options="classList" v-model="queryForm.class"></v-select>
-            </div>
-            <div class="form-group">
-              <label>周 ({{minWeek}}-{{maxWeek}})</label>
-              <input type="number" :max="maxWeek" :min="minWeek" v-model="queryForm.week" class="form-control" :placeholder="`最小 ${minWeek} 最大 ${maxWeek}`">
-            </div>
-            <div class="form-group">
-              <label>排除课程类型</label>
-              <v-select :options="courseTypeList" v-model="queryForm.excludedTypes" multiple></v-select>
-            </div>
-          </div>
-          <div class="panel-footer">
-            <button class="btn btn-success btn-block" @click="formSubmit(queryForm)">查询</button>
-            <button @click="$router.go(-1)" class="btn btn-block btn-default">返回</button>
+        </mu-paper>
+      </div>
+
+      <div class="col col-lg-8">
+        <!-- Week range list -->
+        <div　align="center">
+          <div class="mu-pagination">
+            <ul>
+              <li v-for="index in maxWeek" :key="index">
+                <button tabindex="0" type="button" class="mu-button mu-pagination-item mu-flat-button " style="-webkit-user-select: none; outline: none; -webkit-appearance: none;">
+                  <div class="mu-button-wrapper">
+                    <div class="mu-ripple-wrapper"></div>
+                    {{index + (minWeek - 1)}}
+                  </div>
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -37,8 +59,14 @@
 import Utils from "@/commons/utils";
 import axios from "axios";
 
+import ClassChoosing from "./_classQuery/classChoosing";
+
 export default {
   name: "pc-class-query",
+
+  components : {
+    ClassChoosing
+  },
 
   props: {
     term: String
@@ -50,12 +78,16 @@ export default {
 
       maxWeek: 0,
       minWeek: 0,
+
+      // Course type
       courseTypeList: [],
+
+      courseTypeExcludeList:{},
 
       queryForm: {
         class: null,
         week: null,
-        excludedTypes: null
+        excludedTypes: []
       }
     };
   },
@@ -82,8 +114,8 @@ export default {
       this.$router.push({
         path: `/pc/term/${this.term}/class/${this.queryForm.class}/schedule`,
         query: {
-          week : this.queryForm.week,
-          excludedTypes : this.queryForm.excludedTypes
+          week: this.queryForm.week,
+          excludedTypes: this.queryForm.excludedTypes
         }
       });
     }
