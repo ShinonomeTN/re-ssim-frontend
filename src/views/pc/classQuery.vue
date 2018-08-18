@@ -1,9 +1,11 @@
 <template>
   <div class="container" style="margin-top:10pt">
     <div class="row">
+
       <!-- Term info, class choosing and exclude type choosing -->
       <div class="col col-lg-4">
         <mu-paper :z-depth='1'>
+
           <mu-appbar style="width: 100%;" color="primary">
             <div>
               <p>班级课表</p>
@@ -13,7 +15,9 @@
               返回
             </mu-button>
           </mu-appbar>
+
           <div style="padding: 3pt 10pt">
+
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
               <mu-button full-width >{{term}}</mu-button>
@@ -27,9 +31,10 @@
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
               <mu-select v-model="queryForm.excludedTypes" chips multiple full-width no-data-text="空">
-                  <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
-                </mu-select>
+                <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
+              </mu-select>
             </div>
+
           </div>
         </mu-paper>
       </div>
@@ -51,6 +56,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -59,7 +65,7 @@
 import Utils from "@/commons/utils";
 import axios from "axios";
 
-import ClassChoosing from "./_classQuery/classChoosing";
+import ClassChoosing from "./classQuery/classChoosing";
 
 export default {
   name: "pc-class-query",

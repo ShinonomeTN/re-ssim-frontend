@@ -1,43 +1,56 @@
-// 不同功能模块的路由应代码分离
-// import homepage from "./homepage"
-// import courseQuery from './courseQuery'
-
-// export default [
-//   // Homepage
-//   homepage,
-
-//   // Course queries
-//   courseQuery
-// ]
+import Utils from "@/commons/utils";
 
 export default {
   path: "/pc",
   component: require("@/views/pc/"),
   children: [
     //
+    // Errors
+    //
+    {
+      path: "db_empty",
+      component: resolve => require(["@/views/pc/newSite"], resolve)
+    },
+
+    //
     // Homepage
     //
     {
       path: "current",
       alias: "",
+      beforeEnter(to, from, next) {
+        Utils.newRequest("/api/server?hello")
+          .then((result) => {
+            let data = result.data;
+
+            if (!data.ping === "pong") alert("WTF? API CHANGED!");
+
+            if (!data.db_available) {
+              next("/pc/db_empty")
+              return;
+            }
+
+            next();
+          }).catch((err) => {
+            console.log(err);
+            next("/error")
+          });
+      },
       component: resolve => require(["@/views/pc/current"], resolve)
-    },
-    {
-      path: "histories",
-      component: resolve => require(["@/views/pc/histories"], resolve)
     },
     {
       path: "term/:term",
       component: resolve => require(["@/views/pc/current"], resolve),
       props: true
     },
+
     //
     // Querying
     //
     {
       path: "term/:term/courses",
       component: resolve => require(["@/views/pc/courseList"], resolve),
-      props : true
+      props: true
     },
     {
       path: "term/:term/class",
@@ -49,6 +62,7 @@ export default {
       component: resolve => require(["@/views/pc/teacherQuery"], resolve),
       props: true
     },
+
     //
     // Result
     //

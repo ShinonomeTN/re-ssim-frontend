@@ -22,6 +22,14 @@ const routeMapping = [
 
   pcRoutes,
 
+  // Error
+  {
+    path: 'error',
+    component: {
+      template: '<div>Ooops, something goes wrong.</div>'
+    }
+  },
+
   // 404 置后
   {
     path: '*',

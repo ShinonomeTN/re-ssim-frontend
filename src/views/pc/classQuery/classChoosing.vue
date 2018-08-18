@@ -1,7 +1,7 @@
 <template>
     <div>
       <mu-auto-complete :data="['fake','data']" full-width label="手动填写班级" v-model="className"></mu-auto-complete>
-      <mu-button full-width color="orange" @click="openDialog()" >选择一个班级</mu-button>
+      <mu-button full-width color="orange" @click="_openDialog()" >选择一个班级</mu-button>
         <mu-dialog width="500" scrollable :open.sync="isDialogOpened">
           <div slot="title">
             选择班级<br> 
@@ -25,7 +25,7 @@
           </div>
           <div slot="actions">
             <mu-button flat color="primary" @click="backPreviewClassMapping()" v-if="classTreeSelectHistory.length > 1">上一个</mu-button>
-            <mu-button flat color="primary" @click="closeDialog()">关闭</mu-button>
+            <mu-button flat color="primary" @click="_closeDialog()">关闭</mu-button>
           </div>
       </mu-dialog>
     </div>
@@ -33,6 +33,7 @@
 
 <script>
 import Utils from "@/commons/utils";
+import UX from "@/commons/ux";
 
 const Business = $ressim.businesses;
 
@@ -66,28 +67,21 @@ export default {
   mounted() {},
 
   methods: {
-    openDialog() {
-      this.isDialogOpened = true;
-      if (!this.classList) {
-        this.loadClassList();
-      }
-    },
-
-    closeDialog() {
-      this.isDialogOpened = false;
-      this.classTreeSelectHistory = [];
-      this.classTreeSelectHistory.push(this.classMapping);
-    },
-
     loadClassList() {
       this.isLoadingClasses = true;
       Utils.newRequest(`/api/term/${this.term}?class`)
         .then(response => {
+          if (!response.data) {
+            this._handleEmptyData();
+            return;
+          }
+
           this.classList = Business.splitClassNames(response.data.classes);
           this.classMapping = Business.buildClassTree(this.classList);
 
           this.classTreeSelectHistory.push(this.classMapping);
         })
+        .catch(error => this._handleEmptyData())
         .then(() => (this.isLoadingClasses = false));
     },
 
@@ -96,7 +90,7 @@ export default {
         this.classTreeSelectHistory.push(target);
       } else {
         this.className = target.name;
-        this.closeDialog();
+        this._closeDialog();
       }
     },
 
@@ -104,6 +98,31 @@ export default {
       if (this.classTreeSelectHistory.length > 1) {
         this.classTreeSelectHistory.pop();
       }
+    },
+
+    /**
+     *
+     * Helper methods
+     *
+     */
+
+    _openDialog() {
+      this.isDialogOpened = true;
+      if (!this.classList) {
+        this.loadClassList();
+      }
+    },
+
+    _closeDialog() {
+      this.isDialogOpened = false;
+      this.classTreeSelectHistory = [];
+      this.classTreeSelectHistory.push(this.classMapping);
+    },
+
+    _handleEmptyData() {
+      UX.toastDefault("无数据");
+      this.isLoadingClasses = false;
+      this._closeDialog();
     }
   }
 };
