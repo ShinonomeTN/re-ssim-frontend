@@ -13,6 +13,10 @@ import 'muse-ui/dist/muse-ui.css';
 import 'typeface-roboto';
 Vue.use(MuseUI);
 
+// Vue Toasted
+import Toasted from "vue-toasted";
+Vue.use(Toasted);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

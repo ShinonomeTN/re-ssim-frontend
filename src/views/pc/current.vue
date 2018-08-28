@@ -13,7 +13,7 @@
         </mu-appbar>
 
         <!-- Select function  -->
-        <div class="container-fluid" style="padding-top: 10pt; padding-bottom: 10pt;" v-if="menuState === 'select_function'">
+        <div class="container-fluid center-container" v-if="menuState === 'select_function'">
           <div class="row align-items-center">
             <mu-col span="6">
               <div v-if="!term">
@@ -36,7 +36,7 @@
                     </mu-list-item-action>
                     <mu-list-item-title>{{item.title}}</mu-list-item-title>
                   </mu-list-item>
-                  <mu-list-item button @click="showSelectTerm()" class="list-group-item">
+                  <mu-list-item button @click="enterSelectTerm()" class="list-group-item">
                     <mu-list-item-action>
                       <mu-icon value="history"></mu-icon>
                     </mu-list-item-action>
@@ -49,7 +49,7 @@
         </div>
 
         <!-- Select history -->
-        <div class="container-fluid" style="padding-top: 10pt; padding-bottom: 10pt" v-if="menuState === 'select_history'">
+        <div class="container-fluid center-container" v-if="menuState === 'select_history'">
           <div class="row align-items-center">
             <mu-col span="6" style="text-align:center">
               <mu-icon value="history" size="56" center></mu-icon>
@@ -82,6 +82,7 @@
 
 <script>
 import Utils from "@/commons/utils";
+import UX from "@/commons/ux";
 
 export default {
   name: "pc-current-term",
@@ -128,15 +129,11 @@ export default {
     //
     // UI status changing
     //
-    showSelectTerm() {
+    enterSelectTerm() {
       this.menuState = "select_history";
 
       if (this.termHistories.length <= 0) {
-        this.isLoadingTermHistories = true;
-        Utils.newRequest("/api/term").then(r => {
-          this.isLoadingTermHistories = false;
-          this.termHistories = r.data;
-        });
+        this._updateHistoriesList();
       }
     },
 
@@ -152,7 +149,49 @@ export default {
 
     backToFunctionList() {
       this.menuState = "select_function";
+    },
+
+    /**
+     *
+     * Helper methos
+     *
+     */
+    _updateHistoriesList() {
+      this.isLoadingTermHistories = true;
+
+      Utils.newRequest("/api/term")
+        .then(r => {
+          if (!r.data || r.data.length <= 0) {
+            this._handleEmptyHistories();
+            return;
+          }
+
+          this.termHistories = r.data;
+        })
+        .catch(error => {
+          if(error.response){
+            UX.toastWarning("获取数据错误");
+            this.backToFunctionList();
+
+            console.log(error);
+          }
+        })
+        .then(() => {
+          this.isLoadingTermHistories = false;
+        });
+    },
+
+    _handleEmptyHistories() {
+      UX.toastWarning("无历史数据");
+      this.backToFunctionList();
     }
   }
 };
 </script>
+
+<style scoped>
+.center-container {
+  padding-top: 10pt; 
+  padding-bottom: 10pt;
+}
+</style>

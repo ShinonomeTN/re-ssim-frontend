@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import pcRoutes from './pc/';
+import pcRouting from './pc';
+import staffRouting from "./staff";
 
 import Utils from "@/commons/utils";
 
@@ -20,7 +21,19 @@ const routeMapping = [
     }
   },
 
-  pcRoutes,
+  // PC client routing
+  pcRouting,
+
+  // Manager panel
+  staffRouting,
+
+  // Error
+  {
+    path: 'error',
+    component: {
+      template: '<div>Ooops, something goes wrong.</div>'
+    }
+  },
 
   // 404 置后
   {
