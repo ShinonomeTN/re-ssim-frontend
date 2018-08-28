@@ -23,10 +23,6 @@ export default {
       component: resolve => require(["@/views/pc/current"], resolve)
     },
     {
-      path: "histories",
-      component: resolve => require(["@/views/pc/histories"], resolve)
-    },
-    {
       path: "term/:term",
       component: resolve => require(["@/views/pc/current"], resolve),
       props: true

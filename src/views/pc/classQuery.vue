@@ -1,8 +1,8 @@
 <template>
-  <div class="container" style="margin-top:10pt">
+  <div class="container-fuild" style="margin:10pt">
     <div class="row">
       <!-- Term info, class choosing and exclude type choosing -->
-      <div class="col col-lg-4">
+      <div class="col col-lg-3">
         <mu-paper :z-depth='1'>
           <mu-appbar style="width: 100%;" color="primary">
             <div>
@@ -16,7 +16,7 @@
           <div style="padding: 3pt 10pt">
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-              <mu-button full-width >{{term}}</mu-button>
+              <mu-button full-width>{{term}}</mu-button>
             </div>
             
             <div>
@@ -34,20 +34,16 @@
         </mu-paper>
       </div>
 
-      <div class="col col-lg-8">
-        <!-- Week range list -->
-        <div　align="center">
-          <div class="mu-pagination">
-            <ul>
-              <li v-for="index in maxWeek" :key="index">
-                <button tabindex="0" type="button" class="mu-button mu-pagination-item mu-flat-button " style="-webkit-user-select: none; outline: none; -webkit-appearance: none;">
-                  <div class="mu-button-wrapper">
-                    <div class="mu-ripple-wrapper"></div>
-                    {{index + (minWeek - 1)}}
-                  </div>
-                </button>
-              </li>
-            </ul>
+      <div class="col col-lg-9">
+        <div style="margin-top:10pt">
+          <!-- Week range list -->
+          <div class="mu-paper mu-paper-round mu-elevation-1" style="margin-top:5pt; overflow:hidden">
+            <mu-flex>
+              <mu-flex class="week-button" style="text-align:center;cursor:default">周数</mu-flex>
+              <mu-flex v-for="index in maxWeek" :key="index" justify-content="center" fill class="week-button" tag="button">
+                {{index + (minWeek - 1)}}
+              </mu-flex>
+            </mu-flex>
           </div>
         </div>
       </div>
@@ -59,12 +55,12 @@
 import Utils from "@/commons/utils";
 import axios from "axios";
 
-import ClassChoosing from "./_classQuery/classChoosing";
+import ClassChoosing from "./classQuery/classChoosing";
 
 export default {
   name: "pc-class-query",
 
-  components : {
+  components: {
     ClassChoosing
   },
 
@@ -82,7 +78,7 @@ export default {
       // Course type
       courseTypeList: [],
 
-      courseTypeExcludeList:{},
+      courseTypeExcludeList: {},
 
       queryForm: {
         class: null,
@@ -124,3 +120,27 @@ export default {
   computed: {}
 };
 </script>
+
+<style scoped>
+.week-button {
+  padding: 5pt;
+
+  -webkit-appearance: none;
+  border: none;
+  background: #009688;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+}
+
+.week-button.activated {
+  background: #ff6d00;
+}
+
+.week-button.disabled {
+  color: #9e9e9e;
+  background: #e0e0e0;
+  cursor: not-allowed;
+}
+</style>
+

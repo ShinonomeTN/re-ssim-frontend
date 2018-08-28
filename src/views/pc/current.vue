@@ -142,7 +142,7 @@ export default {
 
     toTerm(termName) {
       if (termName === this.currentTerm) {
-        this.$router.push("/pc");
+        this.$router.push("/pc/current");
       } else {
         this.$router.push(`/pc/term/${termName}`);
       }
