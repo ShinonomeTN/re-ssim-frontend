@@ -75,7 +75,7 @@ export default {
 
       maxWeek: 0,
       minWeek: 0,
-      activatedWeekList : null,
+      activatedWeekList : [],
 
       // Course type
       courseTypeList: [],

@@ -1,9 +1,17 @@
 <template>
     <div>
-        <div class="mu-paper mu-paper-round mu-elevation-1 week-bar" :class="{activated : hasActivatedWeeks}">
+        <div class="mu-paper mu-paper-round mu-elevation-1 week-bar" v-bind:class="{activated : hasActivatedWeeks}">
             <mu-flex>
-              <mu-flex class="week-button" style="text-align:center;cursor:default">周数</mu-flex>
-              <mu-flex v-for="index in maxWeek" :key="index" justify-content="center" fill class="week-button" tag="button" :ref="`wbtn-${index}`">
+              <mu-flex v-bind:class="{activated : hasActivatedWeeks}" class="week-bar-header" style="text-align:center;cursor:default">周数</mu-flex>
+              <mu-flex 
+                v-for="index in maxWeek" 
+                :key="index" 
+                justify-content="center" 
+                fill 
+                class="week-button" 
+                v-bind:class="{available : activated.includes(index), activated : current === index}" 
+                tag="button">
+
                 {{index + (minWeek - 1)}}
               </mu-flex>
             </mu-flex>
@@ -20,47 +28,58 @@ export default {
   },
 
   data() {
-    return {};
-  },
-
-  watched:{
-      activated : (newVal, oldVal) => {
-          this.activated.forEach(element => {
-            //   this.$refs[`wbtn-${element}`]
-            console.log("activated week list changed");
-          });
-      }
+    return {
+      current : 0
+    };
   },
 
   computed: {
     maxWeek() {
       return this.max ? this.max : 0;
     },
-    
+
     minWeek() {
       return this.min ? this.min : 0;
     },
-    
+
     activatedWeeks() {
-      this.activated ? this.activated : [];
+      return this.activated ? this.activated : [];
     },
 
-    hasActivatedWeeks(){
-        return this.activatedWeeks;
+    hasActivatedWeeks() {
+      return this.activatedWeeks.length > 0;
     }
   }
 };
 </script>
 
 <style scoped>
-.week-bar.activated{
-    background-color : #009688;
+.week-bar.activated {
+  background-color: #009688;
 }
 
-.week-bar{
-    margin-top:5pt; 
-    overflow:hidden;
-    background-color: #e0e0e0;
+.week-bar {
+  margin-top: 5pt;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.week-bar-header {
+  padding: 5pt;
+
+  -webkit-appearance: none;
+  border: none;
+
+  color: #9e9e9e;
+  background: #e0e0e0;
+  cursor: not-allowed;
+
+  font-weight: 500;
+}
+
+.week-bar-header.activated {
+  color: #fff;
+  background-color: #009688;
 }
 
 .week-button {
@@ -72,12 +91,19 @@ export default {
   color: #9e9e9e;
   background: #e0e0e0;
   cursor: not-allowed;
-  
+
   font-weight: 500;
+}
+
+.week-button.available {
+  background: #009688;
+  color: #fff;
+  cursor: pointer;
 }
 
 .week-button.activated {
   background: #ff6d00;
+  color: #fff;
 }
 
 .week-button.disabled {
