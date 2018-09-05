@@ -10,7 +10,8 @@
                 fill 
                 class="week-button" 
                 v-bind:class="{available : activated.includes(index), activated : current === index}" 
-                tag="button">
+                tag="button"
+                @click="onWeekButtonClick(index)">
 
                 {{index + (minWeek - 1)}}
               </mu-flex>
@@ -31,6 +32,13 @@ export default {
     return {
       current : 0
     };
+  },
+
+  methods : {
+    onWeekButtonClick(index) {
+      this.current = index;
+      this.$emit("changed",index);
+    }
   },
 
   computed: {
@@ -62,6 +70,8 @@ export default {
   margin-top: 5pt;
   overflow: hidden;
   background-color: #fff;
+
+  outline: none;
 }
 
 .week-bar-header {
@@ -93,6 +103,8 @@ export default {
   cursor: not-allowed;
 
   font-weight: 500;
+
+  outline: none;
 }
 
 .week-button.available {

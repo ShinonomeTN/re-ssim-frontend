@@ -25,7 +25,7 @@
             
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">班级</div>
-              <class-choosing :term="term"></class-choosing>
+              <class-choosing :term="term" @changed="onClassChanged($event)"></class-choosing>
             </div>
 
             <div>
@@ -42,7 +42,7 @@
       <div class="col col-lg-9">
         <div style="margin-top:10pt">
           <!-- Week range list -->
-          <week-bar :max="maxWeek" :min="minWeek" :activated="activatedWeekList"></week-bar>
+          <week-bar :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
         </div>
       </div>
 
@@ -75,7 +75,7 @@ export default {
 
       maxWeek: 0,
       minWeek: 0,
-      activatedWeekList : [],
+      activatedWeekList: [],
 
       // Course type
       courseTypeList: [],
@@ -116,6 +116,18 @@ export default {
           excludedTypes: this.queryForm.excludedTypes
         }
       });
+    },
+
+    onClassChanged(newClass) {
+      Utils.newRequest(`/api/term/${this.term}/${newClass}?weeks`).then(
+        r => (this.activatedWeekList = r.data.weeks)
+      );
+
+      this.queryForm.class = newClass;
+    },
+
+    onWeekChanged(newWeek) {
+      this.queryForm.week = newWeek;
     }
   },
 
@@ -124,6 +136,5 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
 

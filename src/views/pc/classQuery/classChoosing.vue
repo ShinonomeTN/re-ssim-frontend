@@ -69,6 +69,12 @@ export default {
 
   mounted() {},
 
+  watch: {
+    className(newValue, oldValue) {
+      this.$emit("changed", newValue);
+    }
+  },
+
   methods: {
     loadClassList() {
       this.isLoadingClasses = true;
@@ -80,7 +86,9 @@ export default {
           }
 
           this.classList = response.data.classes;
-          this.classMapping = Business.buildClassTree(Business.splitClassNames(this.classList));
+          this.classMapping = Business.buildClassTree(
+            Business.splitClassNames(this.classList)
+          );
 
           this.classTreeSelectHistory.push(this.classMapping);
         })
