@@ -1,6 +1,6 @@
 <template>
     <div>
-      <mu-auto-complete :data="['fake','data']" full-width label="手动填写班级" v-model="className"></mu-auto-complete>
+      <mu-auto-complete :data="classList" :max-search-results="5" full-width label="手动填写班级" v-model="className"></mu-auto-complete>
       <mu-button full-width color="orange" @click="_openDialog()" >选择一个班级</mu-button>
       <mu-dialog width="500" scrollable :open.sync="isDialogOpened">
 
@@ -59,7 +59,7 @@ export default {
       className: "",
 
       // Raw data
-      classList: null,
+      classList: [],
 
       // Dialog choosing
       classMapping: {},
@@ -79,8 +79,8 @@ export default {
             return;
           }
 
-          this.classList = Business.splitClassNames(response.data.classes);
-          this.classMapping = Business.buildClassTree(this.classList);
+          this.classList = response.data.classes;
+          this.classMapping = Business.buildClassTree(Business.splitClassNames(this.classList));
 
           this.classTreeSelectHistory.push(this.classMapping);
         })
@@ -111,7 +111,7 @@ export default {
 
     _openDialog() {
       this.isDialogOpened = true;
-      if (!this.classList) {
+      if (this.classList.length <= 0) {
         this.loadClassList();
       }
     },
