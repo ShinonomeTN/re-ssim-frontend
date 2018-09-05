@@ -1,20 +1,20 @@
 import axios from "axios";
 
-var apiParamsSerializer = function(params) {
+var apiParamsSerializer = function (params) {
   var parts = [];
-    for (var key in params) {
-      if (params.hasOwnProperty(key)) {
-        var obj = params[key];
-        if ($.isArray(obj)) {
-          for (var idx = 0; idx < obj.length; idx++) {
-            parts.push(key + "=" + encodeURIComponent(obj[idx]));
-          }
-        } else {
-          parts.push(key + "=" + encodeURIComponent(obj));
+  for (var key in params) {
+    if (params.hasOwnProperty(key)) {
+      var obj = params[key];
+      if (obj instanceof Array) {
+        for (var idx = 0; idx < obj.length; idx++) {
+          parts.push(key + "=" + encodeURIComponent(obj[idx]));
         }
+      } else {
+        parts.push(key + "=" + encodeURIComponent(obj));
       }
     }
-    return parts.join("&");
+  }
+  return parts.join("&");
 };
 
 export default {
@@ -51,7 +51,7 @@ export default {
   },
 
   // UserAgent and System info
-  client: (function() {
+  client: (function () {
     const ua = navigator.userAgent;
 
     const isWindowsPhone = /(?:Windows Phone)/.test(ua);

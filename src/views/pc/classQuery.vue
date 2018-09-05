@@ -3,7 +3,7 @@
     <div class="row">
 
       <!-- Term info, class choosing and exclude type choosing -->
-      <div class="col col-lg-3">
+      <div class="col col-lg-4">
         <mu-paper :z-depth='1'>
 
           <mu-appbar style="width: 100%;" color="primary">
@@ -30,7 +30,7 @@
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
-              <mu-select v-model="queryForm.excludedTypes" chips multiple full-width no-data-text="空">
+              <mu-select v-model="selectedexcludedTypes" chips multiple full-width no-data-text="空">
                 <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
               </mu-select>
             </div>
@@ -39,10 +39,18 @@
         </mu-paper>
       </div>
 
-      <div class="col col-lg-9">
-        <div style="margin-top:10pt">
+      <div class="col col-lg-8">
+        <div style="">
           <!-- Week range list -->
-          <week-bar :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
+          <week-bar class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
+        </div>
+
+        <div style="margin-top:10pt">
+          <mu-paper :z-depth="1" v-if="queryResult.length > 0">
+            <div v-for="(item,index) in queryResult" :key="index">
+              {{item}}
+            </div>
+          </mu-paper>
         </div>
       </div>
 
@@ -82,11 +90,11 @@ export default {
 
       courseTypeExcludeList: {},
 
-      queryForm: {
-        class: null,
-        week: null,
-        excludedTypes: []
-      }
+      selectedClass : "",
+      selectedWeek : "",
+      selectedexcludedTypes: [],
+
+      queryResult : []
     };
   },
 
@@ -107,27 +115,43 @@ export default {
     });
   },
 
+  watch: {
+    selectedWeek(newValue, oldValue) {
+      console.log("Method called");
+      if ((this.selectedWeek != null) && this.selectedWeek != null) {
+        console.log("New Request")
+        Utils.newQuery(`/api/term/${this.term}/course`, {
+          class: this.selectedClass,
+          week: this.selectedWeek,
+          excludedType: this.selectedexcludedTypes
+        }).then(response => {
+          this.queryResult = response.data;
+        });
+      }
+    }
+  },
+
   methods: {
-    formSubmit(formData) {
-      this.$router.push({
-        path: `/pc/term/${this.term}/class/${this.queryForm.class}/schedule`,
-        query: {
-          week: this.queryForm.week,
-          excludedTypes: this.queryForm.excludedTypes
-        }
-      });
-    },
+    // formSubmit(formData) {
+    //   this.$router.push({
+    //     path: `/pc/term/${this.term}/class/${this.queryForm.class}/schedule`,
+    //     query: {
+    //       week: this.queryForm.week,
+    //       excludedTypes: this.queryForm.excludedTypes
+    //     }
+    //   });
+    // },
 
     onClassChanged(newClass) {
       Utils.newRequest(`/api/term/${this.term}/${newClass}?weeks`).then(
         r => (this.activatedWeekList = r.data.weeks)
       );
 
-      this.queryForm.class = newClass;
+      this.selectedClass = newClass;
     },
 
     onWeekChanged(newWeek) {
-      this.queryForm.week = newWeek;
+      this.selectedWeek = newWeek;
     }
   },
 

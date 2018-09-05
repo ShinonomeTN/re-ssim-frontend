@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="mu-paper mu-paper-round mu-elevation-1 week-bar" v-bind:class="{activated : hasActivatedWeeks}">
+        <div class="mu-paper mu-paper-round week-bar" v-bind:class="{activated : hasActivatedWeeks}">
             <mu-flex>
-              <mu-flex v-bind:class="{activated : hasActivatedWeeks}" class="week-bar-header" style="text-align:center;cursor:default">周数</mu-flex>
+              <mu-flex v-bind:class="{activated : hasActivatedWeeks}" class="week-bar-header" style="text-align:center;cursor:default">周</mu-flex>
               <mu-flex 
                 v-for="index in maxWeek" 
                 :key="index" 
@@ -67,7 +67,6 @@ export default {
 }
 
 .week-bar {
-  margin-top: 5pt;
   overflow: hidden;
   background-color: #fff;
 
