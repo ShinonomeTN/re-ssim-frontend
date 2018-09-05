@@ -36,6 +36,7 @@ export default {
 
   methods : {
     onWeekButtonClick(index) {
+      if(!this.activatedWeeks.includes(index)) return;
       this.current = index;
       this.$emit("changed",index);
     }
