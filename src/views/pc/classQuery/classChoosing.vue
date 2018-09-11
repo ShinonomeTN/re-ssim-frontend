@@ -1,7 +1,8 @@
 <template>
     <div>
-      <mu-auto-complete :data="classList" :max-search-results="5" full-width label="手动填写班级" v-model="className"></mu-auto-complete>
-      <mu-button full-width color="orange" @click="_openDialog()" >选择一个班级</mu-button>
+      
+      <mu-button full-width color="orange" @click="_openDialog()" >{{className ? className : '选择一个班级'}}</mu-button>
+
       <mu-dialog width="500" scrollable :open.sync="isDialogOpened">
 
         <div slot="title">
@@ -131,7 +132,7 @@ export default {
     },
 
     _handleEmptyData() {
-      UX.toastDefault("无数据");
+      UX.toastDefault("无班级数据");
       this.isLoadingClasses = false;
       this._closeDialog();
     }

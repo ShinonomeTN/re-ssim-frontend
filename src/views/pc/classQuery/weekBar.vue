@@ -4,16 +4,16 @@
             <mu-flex>
               <mu-flex v-bind:class="{activated : hasActivatedWeeks}" class="week-bar-header" style="text-align:center;cursor:default">周</mu-flex>
               <mu-flex 
-                v-for="index in maxWeek" 
+                v-for="index in max" 
                 :key="index" 
                 justify-content="center" 
                 fill 
                 class="week-button" 
                 v-bind:class="{available : activated.includes(index), activated : current === index}" 
                 tag="button"
-                @click="onWeekButtonClick(index)">
+                @click="_onWeekButtonClick(index)">
 
-                {{index + (minWeek - 1)}}
+                {{index + (min - 1)}}
               </mu-flex>
             </mu-flex>
         </div>
@@ -23,40 +23,55 @@
 <script>
 export default {
   props: {
-    max: Number,
-    min: Number,
-    activated: Array
+    max: {
+      type: Number,
+      default: 0
+    },
+
+    min: {
+      type: Number,
+      default: 0
+    },
+
+    activated: {
+      type: Array,
+      default: []
+    }
   },
 
   data() {
     return {
-      current : 0
+      current: 0
     };
   },
 
-  methods : {
-    onWeekButtonClick(index) {
-      if(!this.activatedWeeks.includes(index)) return;
+  methods: {
+    _onWeekButtonClick(index) {
+      if (!this.activated.includes(index)) return;
+
       this.current = index;
-      this.$emit("changed",index);
+      this.$emit("changed", index);
+    },
+
+    select(week) {
+      if (week) this._onWeekButtonClick(week);
+      else this.clearSelected();
+    },
+
+    clearSelected() {
+      this.current = 0;
+    }
+  },
+
+  watch: {
+    activated(newVal, oldVal) {
+      if (!this.activated.includes(this.current)) this.clearSelected();
     }
   },
 
   computed: {
-    maxWeek() {
-      return this.max ? this.max : 0;
-    },
-
-    minWeek() {
-      return this.min ? this.min : 0;
-    },
-
-    activatedWeeks() {
-      return this.activated ? this.activated : [];
-    },
-
     hasActivatedWeeks() {
-      return this.activatedWeeks.length > 0;
+      return this.activated.length > 0;
     }
   }
 };
@@ -64,7 +79,7 @@ export default {
 
 <style scoped>
 .week-bar.activated {
-  background-color: #009688;
+  background-color: #2196f3;
 }
 
 .week-bar {
@@ -89,7 +104,7 @@ export default {
 
 .week-bar-header.activated {
   color: #fff;
-  background-color: #009688;
+  background-color: #2196f3;
 }
 
 .week-button {
@@ -108,13 +123,13 @@ export default {
 }
 
 .week-button.available {
-  background: #009688;
+  background: #2196f3;
   color: #fff;
   cursor: pointer;
 }
 
 .week-button.activated {
-  background: #ff6d00;
+  background: #ff9800;
   color: #fff;
 }
 

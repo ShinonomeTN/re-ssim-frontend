@@ -42,15 +42,11 @@
       <div class="col col-lg-8">
         <div style="">
           <!-- Week range list -->
-          <week-bar class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
+          <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
         </div>
 
         <div style="margin-top:10pt">
-          <mu-paper :z-depth="1" v-if="queryResult.length > 0">
-            <div v-for="(item,index) in queryResult" :key="index">
-              {{item}}
-            </div>
-          </mu-paper>
+          <lesson-list :data="queryResult"></lesson-list>
         </div>
       </div>
 
@@ -64,13 +60,15 @@ import axios from "axios";
 
 import ClassChoosing from "./classQuery/classChoosing";
 import WeekBar from "./classQuery/weekBar";
+import LessonList from "./classQuery/lessonList";
 
 export default {
   name: "pc-class-query",
 
   components: {
     ClassChoosing,
-    WeekBar
+    WeekBar,
+    LessonList
   },
 
   props: {
@@ -90,11 +88,11 @@ export default {
 
       courseTypeExcludeList: {},
 
-      selectedClass : "",
-      selectedWeek : "",
+      selectedClass: "",
+      selectedWeek: "",
       selectedexcludedTypes: [],
 
-      queryResult : []
+      queryResult: []
     };
   },
 
@@ -117,9 +115,23 @@ export default {
 
   watch: {
     selectedWeek(newValue, oldValue) {
-      console.log("Method called");
-      if ((this.selectedWeek != null) && this.selectedWeek != null) {
-        console.log("New Request")
+      this.queryClassLessons();
+    },
+
+    selectedClass(newValue, oldValue) {
+      this.queryClassLessons();
+    },
+
+    selectedexcludedTypes(newValue, oldValue) {
+      this.queryClassLessons();
+    }
+  },
+
+  methods: {
+
+    queryClassLessons() {
+      if (this.selectedWeek && this.selectedWeek) {
+        // console.log("New Request")
         Utils.newQuery(`/api/term/${this.term}/course`, {
           class: this.selectedClass,
           week: this.selectedWeek,
@@ -128,19 +140,7 @@ export default {
           this.queryResult = response.data;
         });
       }
-    }
-  },
-
-  methods: {
-    // formSubmit(formData) {
-    //   this.$router.push({
-    //     path: `/pc/term/${this.term}/class/${this.queryForm.class}/schedule`,
-    //     query: {
-    //       week: this.queryForm.week,
-    //       excludedTypes: this.queryForm.excludedTypes
-    //     }
-    //   });
-    // },
+    },
 
     onClassChanged(newClass) {
       Utils.newRequest(`/api/term/${this.term}/${newClass}?weeks`).then(
@@ -148,6 +148,7 @@ export default {
       );
 
       this.selectedClass = newClass;
+      this.$refs.weekBar.select(this.selectedWeek);
     },
 
     onWeekChanged(newWeek) {
