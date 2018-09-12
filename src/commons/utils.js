@@ -18,6 +18,10 @@ var apiParamsSerializer = function (params) {
 };
 
 export default {
+  isEmptyObj(obj) {
+    return Object.keys(obj).length === 0;
+  },
+
   newRequest(url) {
     return axios.request({
       method: "GET",

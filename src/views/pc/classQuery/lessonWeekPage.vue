@@ -1,8 +1,11 @@
 <template>
-  <div>
+    <div>
     <!-- Full list view -->
     <div v-if="data && data.length > 0" class="ll-container">
-      <day-item v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :weekday="weekMapping[weekdayIndex - 1]" :data="getDayLessons(weekdayIndex)"></day-item>
+      <weekday-bar class="mu-elevation-2" @changed="currentDay = $event"></weekday-bar>
+      <div style="margin-top: 10pt">
+        <day-item v-if="currentDay === weekdayIndex" v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :data="getDayLessons(weekdayIndex)"></day-item>
+      </div>
     </div>
 
     <div class="mupaper mupaper-round mu-elevation-1" v-else>
@@ -12,8 +15,7 @@
 </template>
 
 <script>
-
-import WeekdayBar from "@/components/weekdayBar";
+import WeekDayBar from "@/components/weekdayBar";
 import DayItem from "./lessonListDayItem";
 
 export default {
@@ -34,9 +36,14 @@ export default {
     }
   },
 
-  components : {
-    "day-item" : DayItem
+  components: {
+    "weekday-bar" : WeekDayBar,
+    DayItem
   },
+
+  data : () => ({
+    currentDay : 1
+  }),
 
   methods: {
     getDayLessons(day) {
@@ -52,14 +59,16 @@ export default {
 
       return result
     }
-  },
-
-  computed: {
-    weekMapping: () => ["一", "二", "三", "四", "五", "六", "日"],
   }
 };
 </script>
 
 <style scoped>
+.ll-container {
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
 
 </style>

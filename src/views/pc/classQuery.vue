@@ -45,15 +45,13 @@
           <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
         </div>
 
-        <mu-flex justify-content="end" style="margin: 10pt 5pt 0 0;">
-          <mu-flex justify-content="center" >
-            <mu-checkbox v-model="listMode" uncheck-icon="view_array" checked-icon="view_list"></mu-checkbox>
-          </mu-flex>
-        </mu-flex>
+        <div style="margin: 10pt 5pt 0 0;">
+          <div class="view_trigger"><span>日视图</span> <mu-switch v-model="listMode"></mu-switch> <span>周视图</span></div>
+        </div>
 
         <div style="margin-top: 10pt">
-          <lesson-list :data="queryResult" v-if="listMode"></lesson-list>
-          <div v-else> empty </div>
+          <lesson-list v-if="listMode" :data="queryResult"></lesson-list>
+          <lesson-week-page v-else :data="queryResult"></lesson-week-page>
         </div>
       </div>
 
@@ -65,17 +63,21 @@
 import Utils from "@/commons/utils";
 import axios from "axios";
 
+import WeekBar from "@/components/weekBar";
+
 import ClassChoosing from "./classQuery/classChoosing";
-import WeekBar from "./classQuery/weekBar";
+
 import LessonList from "./classQuery/lessonList";
+import LessonWeekPage from "./classQuery/lessonWeekPage";
 
 export default {
   name: "pc-class-query",
 
   components: {
-    ClassChoosing,
     WeekBar,
-    LessonList
+    ClassChoosing,
+    LessonList,
+    LessonWeekPage
   },
 
   props: {
@@ -172,5 +174,8 @@ export default {
 </script>
 
 <style scoped>
+.view_trigger{
+  margin: 0 3pt
+}
 </style>
 
