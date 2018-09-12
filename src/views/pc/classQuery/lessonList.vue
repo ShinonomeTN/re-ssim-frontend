@@ -1,7 +1,7 @@
 <template>
   <div v-if="data && data.length > 0" class="ll-container">
     
-    <div v-for="weekdayHead in weekdaysMax" class="mupaper mupaper-round mu-elevation-4" :key="weekdayHead" style="display: flex; background : #FFFFFF; margin: 5pt 0">
+    <div v-for="weekdayHead in weekdaysMax" class="mupaper mupaper-round mu-elevation-4" :key="weekdayHead" style="display: flex; background : #FFFFFF; margin-bottom: 10pt">
 
       <div class="week_head" :class="{head_activated : daysHasLessons[weekdayHead]}">{{weekMapping[weekdayHead - 1]}}</div>
 
@@ -32,7 +32,7 @@
   </div>
 
   <div class="mupaper mupaper-round mu-elevation-1" v-else>
-    <div style="padding: 10pt; align-items: center; justify-content: center;" class="ll-container">无数据</div>
+    <div style="padding: 10pt; align-items: center; justify-content: center;" class="ll-container">{{placeholder}}</div>
   </div>
 </template>
 
@@ -52,6 +52,11 @@ export default {
     lessonAmount: {
       type: Number,
       default: 12
+    },
+
+    placeholder :{
+      type: String,
+      default: "选择班级与周以预览课程"
     }
   },
 

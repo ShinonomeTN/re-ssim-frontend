@@ -45,8 +45,15 @@
           <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
         </div>
 
-        <div style="margin-top:10pt">
-          <lesson-list :data="queryResult"></lesson-list>
+        <mu-flex justify-content="end" style="margin: 10pt 5pt 0 0;">
+          <mu-flex justify-content="center" >
+            <mu-checkbox v-model="listMode" uncheck-icon="view_array" checked-icon="view_list"></mu-checkbox>
+          </mu-flex>
+        </mu-flex>
+
+        <div style="margin-top: 10pt">
+          <lesson-list :data="queryResult" v-if="listMode"></lesson-list>
+          <div v-else> empty </div>
         </div>
       </div>
 
@@ -77,6 +84,8 @@ export default {
 
   data: () => {
     return {
+      listMode: false,
+
       classList: [],
 
       maxWeek: 0,
@@ -156,7 +165,9 @@ export default {
     }
   },
 
-  computed: {}
+  computed: {
+    switcherLabel: () => this.listMode ? "周列表" : "日列表"
+  }
 };
 </script>
 
