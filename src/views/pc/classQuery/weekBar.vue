@@ -120,6 +120,8 @@ export default {
   font-weight: 500;
 
   outline: none;
+
+  width: 2em;
 }
 
 .week-button.available {
