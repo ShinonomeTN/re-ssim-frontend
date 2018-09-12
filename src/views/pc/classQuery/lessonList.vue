@@ -1,7 +1,7 @@
 <template>
-  <div v-if="data && data.length > 0" class="ll-container mupaper mupaper-round mu-elevation-4" style="background : #FFFFFF">
+  <div v-if="data && data.length > 0" class="ll-container">
     
-    <div v-for="weekdayHead in weekdaysMax" :key="weekdayHead" style="display: flex;">
+    <div v-for="weekdayHead in weekdaysMax" class="mupaper mupaper-round mu-elevation-4" :key="weekdayHead" style="display: flex; background : #FFFFFF; margin: 5pt 0">
 
       <div class="week_head" :class="{head_activated : daysHasLessons[weekdayHead]}">{{weekMapping[weekdayHead - 1]}}</div>
 
@@ -10,8 +10,8 @@
           <div class="turn_head ll-container" :class="{ head_activated : mappedTurn[`${weekdayHead}-${lessonHead}`] }">{{lessonHead}}</div>
           
           <div style="flex-grow:1">
-            <div class="turn_item" v-for="(lesson,index) in mappedTurn[`${weekdayHead}-${lessonHead}`]" :key="index">
-              <div v-if="lesson" style="border-bottom: solid 1pt #A0A0A0">
+            <div v-for="(lesson,index) in mappedTurn[`${weekdayHead}-${lessonHead}`]" :key="index">
+              <div v-if="lesson" class="turn_item">
                 <div>
                   <mu-badge :content="lesson.code" color="primary"></mu-badge> 
                   {{lesson.name}}（{{lesson.classType}})
@@ -142,5 +142,6 @@ export default {
 }
 
 .turn_item {
+  border-bottom: solid 1pt #a0a0a0;
 }
 </style>
