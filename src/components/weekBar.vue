@@ -84,7 +84,7 @@ export default {
 
 .week-bar {
   overflow: hidden;
-  background-color: #fff;
+  background-color: #e0e0e0;
 
   outline: none;
 }

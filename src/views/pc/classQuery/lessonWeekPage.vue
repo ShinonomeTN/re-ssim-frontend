@@ -8,8 +8,8 @@
       </div>
     </div>
 
-    <div class="mupaper mupaper-round mu-elevation-1" v-else>
-      <div style="padding: 10pt; align-items: center; justify-content: center" class="ll-container">{{placeholder}}</div>
+    <div class="mupaper mupaper-round mu-elevation-1" style="padding : 10pt;" v-else>
+      {{placeholder}}
     </div>
   </div>
 </template>
@@ -67,8 +67,5 @@ export default {
 .ll-container {
   display: flex;
   flex-direction: column;
-  outline: none;
 }
-
-
 </style>
