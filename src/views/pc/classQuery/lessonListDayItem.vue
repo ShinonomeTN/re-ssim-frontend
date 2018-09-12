@@ -1,6 +1,6 @@
 <template>
   <div class="mupaper mupaper-round mu-elevation-4" style="display: flex; background : #FFFFFF; margin-bottom: 10pt">
-    <div class="week_head" v-if="weekday" :class="{head_activated : data}">{{weekday}}</div>
+    <div class="week_head" v-if="weekday" :class="{head_activated : !noData}">{{weekday}}</div>
     <!-- Turn list -->
     <div class="lesson_turns" v-if="!noData">
       <div v-for="lessonHead in maxLessonCount" :key="lessonHead" class="ll-container" style="padding : 2pt 2pt 2pt 0 ;flex-direction: row;">
