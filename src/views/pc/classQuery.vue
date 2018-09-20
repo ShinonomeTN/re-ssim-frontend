@@ -50,8 +50,25 @@
         </div>
 
         <div style="margin-top: 10pt">
-          <lesson-list v-if="listMode" :data="queryResult"></lesson-list>
-          <lesson-week-page v-else :data="queryResult"></lesson-week-page>
+          <lesson-list v-if="listMode" :data="queryResult">
+            <template slot-scope="scope">
+              <div>
+                <mu-badge :content="scope.lesson.code" color="primary"></mu-badge> 
+                {{scope.lesson.name}}（{{scope.lesson.classType}})
+              </div>
+              <div style="padding-left: 10pt"><small>{{scope.lesson.position}}， {{scope.lesson.teacher}} 任课</small></div>
+            </template>
+          </lesson-list>
+
+          <lesson-week-page v-else :data="queryResult">
+            <template slot-scope="scope">
+              <div>
+                <mu-badge :content="scope.lesson.code" color="primary"></mu-badge> 
+                {{scope.lesson.name}}（{{scope.lesson.classType}})
+              </div>
+              <div style="padding-left: 10pt"><small>{{scope.lesson.position}}， {{scope.lesson.teacher}} 任课</small></div>
+            </template>
+          </lesson-week-page>
         </div>
       </div>
 
@@ -143,8 +160,8 @@ export default {
     queryClassLessons() {
       if (this.selectedWeek && this.selectedWeek) {
         // console.log("New Request")
-        Utils.newQuery(`/api/term/${this.term}/course`, {
-          class: this.selectedClass,
+        Utils.newQuery(`/api/term/${this.term}/class/${this.selectedClass}/course`, {
+          // class: this.selectedClass,
           week: this.selectedWeek,
           excludedType: this.selectedexcludedTypes
         }).then(response => {
@@ -154,7 +171,7 @@ export default {
     },
 
     onClassChanged(newClass) {
-      Utils.newRequest(`/api/term/${this.term}/${newClass}?weeks`).then(
+      Utils.newRequest(`/api/term/${this.term}/class/${newClass}/weeks`).then(
         r => (this.activatedWeekList = r.data.weeks)
       );
 

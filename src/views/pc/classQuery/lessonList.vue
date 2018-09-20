@@ -2,7 +2,13 @@
   <div>
     <!-- Full list view -->
     <div v-if="data && data.length > 0" class="ll-container">
-      <day-item v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :weekday="weekMapping[weekdayIndex - 1]" :data="getDayLessons(weekdayIndex)"></day-item>
+      <day-item v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :weekday="weekMapping[weekdayIndex - 1]" :data="getDayLessons(weekdayIndex)">
+        <template slot-scope="scope">
+          <slot v-bind:lesson="scope.lesson">
+            {{scope.lesson}}
+          </slot>
+        </template>
+      </day-item>
     </div>
 
     <div class="mupaper mupaper-round mu-elevation-1" v-else>
@@ -17,6 +23,8 @@ import WeekdayBar from "@/components/weekdayBar";
 import DayItem from "./lessonListDayItem";
 
 export default {
+  name : "pc-lesson-list",
+
   props: {
     data: {
       type: Array,

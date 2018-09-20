@@ -9,13 +9,10 @@
         <!-- Lesson content -->
         <div style="flex-grow:1">
           <div v-for="(lesson,index) in data[`${lessonHead}`]" :key="index">
-            <div v-if="lesson" class="turn_item">
-              <div>
-                <mu-badge :content="lesson.code" color="primary"></mu-badge> 
-                {{lesson.name}}（{{lesson.classType}})
-              </div>
-              <div style="padding-left: 10pt"><small>{{lesson.position}}， {{lesson.teacher}} 任课</small></div>
-            </div>
+            <!-- Slot for customize content -->
+            <slot v-bind:lesson="lesson" v-if="lesson" class="turn_item">
+              {{lesson}}
+            </slot>
           </div>
         </div>
       </div>
@@ -32,6 +29,8 @@
 import Utils from "@/commons/utils";
 
 export default {
+  name : "pc-lesson-day-item",
+
   props: {
     weekday: {
       type: String,

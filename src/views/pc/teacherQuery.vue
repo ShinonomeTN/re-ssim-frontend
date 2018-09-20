@@ -23,7 +23,9 @@
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">教师</div>
-              <mu-button full-width color="orange">某个教师</mu-button>
+              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable @change="onTeacherChanged()">
+                <mu-option v-for="teacherName in teacherList" :key="teacherName" :label="teacherName" :value="teacherName"></mu-option>
+              </mu-select>
             </div>
           </div>
         </mu-paper>
@@ -33,7 +35,7 @@
       <div class="col col-lg-8">
         <div>
           <!-- Week range list -->
-          <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="[]"></week-bar>
+          <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeeks" @changed="onWeekChanged($event)"></week-bar>
         </div>
 
         <div style="margin: 10pt 5pt 0 0;">
@@ -41,8 +43,25 @@
         </div>
 
         <div style="margin-top: 10pt">
-          <lesson-list v-if="listMode" :data="queryResult"></lesson-list>
-          <lesson-week-page v-else :data="queryResult"></lesson-week-page>
+          <lesson-list v-if="listMode" :data="queryResult" placeholder="选择教师与周以查看课程">
+            <template slot-scope="scope">
+              <div>
+                <mu-badge :content="scope.lesson.code" color="primary"></mu-badge> 
+                {{scope.lesson.name}}（{{scope.lesson.classType}})
+              </div>
+              <div style="padding-left: 10pt"><small>{{scope.lesson.position}}</small></div>
+            </template>
+          </lesson-list>
+
+          <lesson-week-page v-else :data="queryResult" placeholder="选择教师与周以查看课程">
+            <template slot-scope="scope">
+              <div>
+                <mu-badge :content="scope.lesson.code" color="primary"></mu-badge> 
+                {{scope.lesson.name}}（{{scope.lesson.classType}})
+              </div>
+              <div style="padding-left: 10pt"><small>{{scope.lesson.position}}</small></div>
+            </template>
+          </lesson-week-page>
         </div>
       </div>
     </div>
@@ -75,11 +94,14 @@ export default {
 
       teacherList: [],
       courseTypeList: [],
+      activatedWeeks: [],
 
       maxWeek: 0,
       minWeek: 0,
 
-      queryResult: {}
+      selectedTeacher: "",
+
+      queryResult: []
     };
   },
 
@@ -92,6 +114,22 @@ export default {
       this.maxWeek = response.data.max;
       this.minWeek = response.data.min;
     });
+  },
+
+  methods: {
+    onTeacherChanged() {
+      Utils.newRequest(
+        `/api/term/${this.term}/teacher/${this.selectedTeacher}/weeks`
+      ).then(resp => {
+        this.activatedWeeks = resp.data.weeks;
+      });
+    },
+
+    onWeekChanged(week) {
+      Utils.newRequest(`/api/term/${this.term}/teacher/${this.selectedTeacher}/course?week=${week}`).then(resp => {
+        this.queryResult = resp.data;
+      })
+    }
   }
 };
 </script>

@@ -4,7 +4,13 @@
     <div v-if="data && data.length > 0" class="ll-container">
       <weekday-bar class="mu-elevation-2" @changed="currentDay = $event"></weekday-bar>
       <div style="margin-top: 10pt">
-        <day-item v-if="currentDay === weekdayIndex" v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :data="getDayLessons(weekdayIndex)"></day-item>
+        <day-item v-if="currentDay === weekdayIndex" v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :data="getDayLessons(weekdayIndex)">
+          <template slot-scope="scope">
+            <slot v-bind:lesson="scope.lesson">
+              {{scope.lesson}}
+            </slot>
+          </template>
+        </day-item>
       </div>
     </div>
 
@@ -19,6 +25,8 @@ import WeekDayBar from "@/components/weekdayBar";
 import DayItem from "./lessonListDayItem";
 
 export default {
+  name : "pc-lesson-week-page",
+
   props: {
     data: {
       type: Array,

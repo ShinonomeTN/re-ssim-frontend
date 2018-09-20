@@ -39,41 +39,39 @@
 </template>
 
 <script>
-  import axios from "axios";
-  
-  const groupBy = $ressim.collections.groupBy;
-  
-  export default {
-    name: "pc-course-list",
-    props: {
-      term: String
-    },
-    data() {
-      return {
-        courseList: {},
-        currentCourse: ""
-      };
-    },
-    mounted() {
-      axios
-        .get(
-          "/api/term/2017-2018%e5%ad%a6%e5%b9%b4%e7%ac%ac%e4%ba%8c%e5%ad%a6%e6%9c%9f?course"
-        )
-        .then(response => {
-          this.courseList = groupBy(response.data, "unit");
-        });
-    }
-  };
+import axios from "axios";
+
+const groupBy = $ressim.collections.groupBy;
+
+export default {
+  name: "pc-course-list",
+
+  props: {
+    term: String
+  },
+
+  data() {
+    return {
+      courseList: {},
+      currentCourse: ""
+    };
+  },
+  mounted() {
+    axios.get(`/api/term/${this.term}?course`).then(response => {
+      this.courseList = groupBy(response.data, "unit");
+    });
+  }
+};
 </script>
 
 <style scoped>
-  .floatContainer>div {
-    display: inline-block;
-    width: 200pt;
-  }
-  
-  hr {
-    margin: 3pt 0pt;
-  }
+.floatContainer > div {
+  display: inline-block;
+  width: 200pt;
+}
+
+hr {
+  margin: 3pt 0pt;
+}
 </style>
 
