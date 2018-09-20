@@ -85,7 +85,7 @@ import Utils from "@/commons/utils";
 import UX from "@/commons/ux";
 
 export default {
-  name: "pc-current-term",
+  name: "pc-welcome",
 
   props: {
     term: String

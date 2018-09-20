@@ -36,11 +36,11 @@ export default {
             next("/error")
           });
       },
-      component: resolve => require(["@/views/pc/current"], resolve)
+      component: resolve => require(["@/views/pc/welcome"], resolve)
     },
     {
       path: "term/:term",
-      component: resolve => require(["@/views/pc/current"], resolve),
+      component: resolve => require(["@/views/pc/welcome"], resolve),
       props: true
     },
 
@@ -61,21 +61,6 @@ export default {
       path: "term/:term/teacher",
       component: resolve => require(["@/views/pc/teacherQuery"], resolve),
       props: true
-    },
-
-    //
-    // Result
-    //
-    {
-      name: "pcClassScheduleRoute",
-      path: "term/:term/class/:class/schedule",
-      component: resolve => require(["@/views/pc/lessonSchedule"], resolve),
-      props: route => ({
-        term: route.params.term,
-        clazz: route.params.class,
-        week: route.query.week,
-        excludedTypes: route.query.excludedTypes
-      })
     }
   ]
 };
