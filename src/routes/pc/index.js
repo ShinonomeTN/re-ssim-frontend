@@ -20,21 +20,20 @@ export default {
       alias: "",
       beforeEnter(to, from, next) {
         Utils.newRequest("/api/server?hello")
-          .then(result => {
+          .then((result) => {
             let data = result.data;
 
             if (!data.ping === "pong") alert("WTF? API CHANGED!");
 
             if (!data.db_available) {
-              next("/pc/db_empty");
+              next("/pc/db_empty")
               return;
             }
 
             next();
-          })
-          .catch(err => {
+          }).catch((err) => {
             console.log(err);
-            next("/error");
+            next("/error")
           });
       },
       component: resolve => require(["@/views/pc/welcome"], resolve)
@@ -50,8 +49,7 @@ export default {
     //
     {
       path: "term/:term/courses",
-      // component: resolve => require(["@/views/pc/courseList"], resolve),
-      component: import("@/views/pc/courseList"),
+      component: resolve => require(["@/views/pc/courseList"], resolve),
       props: true
     },
     {
