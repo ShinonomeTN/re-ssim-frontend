@@ -1,84 +1,88 @@
 <template>
-  <div class="container-fuild" style="margin:10pt">
-    <div class="row">
+  <mu-paper :z-depth="4" class="container-fuild" style="margin:10pt; min-height: 400pt">
 
+    <!-- App Bar -->
+    <mu-appbar style="width: 100%;" color="primary">
+      <div>
+        <p>班级课表</p>
+      </div>
+      <mu-button flat slot="right" @click="$router.go(-1)">
+        <mu-icon left value="arrow_back"></mu-icon>
+        返回
+      </mu-button>
+    </mu-appbar>
+
+    <div class="row">
       <!-- Term info, class choosing and exclude type choosing -->
       <div class="col col-lg-4">
-        <mu-paper :z-depth='1'>
+        <div style="padding: 3pt 10pt">
 
-          <mu-appbar style="width: 100%;" color="primary">
-            <div>
-              <p>班级课表</p>
-            </div>
-            <mu-button flat slot="right" @click="$router.go(-1)">
-              <mu-icon left value="arrow_back"></mu-icon>
-              返回
-            </mu-button>
-          </mu-appbar>
-
-          <div style="padding: 3pt 10pt">
-
-            <div>
-              <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-              <mu-button full-width>{{term}}</mu-button>
-            </div>
-            
-            <div>
-              <div style="padding:5pt 0pt; font-size: 17px">班级</div>
-              <class-choosing :term="term" @changed="onClassChanged($event)"></class-choosing>
-            </div>
-
-            <div>
-              <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
-              <mu-select v-model="selectedExcludedTypes" chips multiple full-width no-data-text="空">
-                <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
-              </mu-select>
-            </div>
-
+          <div>
+            <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
+            <mu-button full-width>{{term}}</mu-button>
           </div>
-        </mu-paper>
+
+          <div>
+            <div style="padding:5pt 0pt; font-size: 17px">班级</div>
+            <class-choosing :term="term" v-model="selectedClass"></class-choosing>
+          </div>
+
+          <div>
+            <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
+            <mu-select v-model="selectedExcludedTypes" chips multiple full-width no-data-text="空">
+              <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
+            </mu-select>
+          </div>
+
+        </div>
       </div>
 
       <div class="col col-lg-8">
-        <div style="">
-          <!-- Week range list -->
-          <week-bar ref="weekBar" 
-                    class="mu-elevation-4" 
-                    :max="maxWeek" 
-                    :min="minWeek" 
-                    :activated="activatedWeekList" 
-                    v-model="selectedWeek"></week-bar>
-        </div>
+        <div style="margin: 10pt 10pt 0 0">
 
-        <div style="margin: 10pt 5pt 0 0;">
-          <div class="view_trigger"><span>日视图</span> <mu-switch v-model="listMode"></mu-switch> <span>周视图</span></div>
-        </div>
+          <div style="">
+            <!-- Week range list -->
+            <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" v-model="selectedWeek"></week-bar>
+          </div>
 
-        <div style="margin-top: 10pt">
-          <lesson-list v-if="listMode" :data="queryResult">
-            <template slot-scope="scope">
-              <div>
-                <mu-badge :content="scope.lesson.code" color="primary"></mu-badge> 
-                {{scope.lesson.name}}（{{scope.lesson.classType}})
-              </div>
-              <div style="padding-left: 10pt"><small>{{scope.lesson.position}}， {{scope.lesson.teacher}} 任课</small></div>
-            </template>
-          </lesson-list>
+          <div style="margin: 10pt 5pt 0 0;">
+            <div class="view_trigger">
+              <span>日视图</span>
+              <mu-switch v-model="listMode"></mu-switch>
+              <span>周视图</span>
+            </div>
+          </div>
 
-          <lesson-week-page v-else :data="queryResult">
-            <template slot-scope="scope">
-              <div>
-                <mu-badge :content="scope.lesson.code" color="primary"></mu-badge> 
-                {{scope.lesson.name}}（{{scope.lesson.classType}})
-              </div>
-              <div style="padding-left: 10pt"><small>{{scope.lesson.position}}， {{scope.lesson.teacher}} 任课</small></div>
-            </template>
-          </lesson-week-page>
+          <div style="margin-top: 10pt">
+            <lesson-list v-if="listMode" :data="queryResult">
+              <template slot-scope="scope">
+                <div>
+                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
+                  {{scope.lesson.name}}（{{scope.lesson.classType}})
+                </div>
+                <div style="padding-left: 10pt">
+                  <small>{{scope.lesson.position}}， {{scope.lesson.teacher}} 任课</small>
+                </div>
+              </template>
+            </lesson-list>
+
+            <lesson-week-page v-else :data="queryResult">
+              <template slot-scope="scope">
+                <div>
+                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
+                  {{scope.lesson.name}}（{{scope.lesson.classType}})
+                </div>
+                <div style="padding-left: 10pt">
+                  <small>{{scope.lesson.position}}， {{scope.lesson.teacher}} 任课</small>
+                </div>
+              </template>
+            </lesson-week-page>
+          </div>
         </div>
       </div>
 
     </div>
-  </div>
+  </mu-paper>
 </template>
 
 <script>
@@ -118,11 +122,10 @@ export default {
 
       // Course type
       courseTypeList: [],
-
       courseTypeExcludeList: {},
 
       selectedClass: "",
-      selectedWeek: "",
+      selectedWeek: 0,
       selectedExcludedTypes: [],
 
       queryResult: []
@@ -152,6 +155,7 @@ export default {
     },
 
     selectedClass(newValue, oldValue) {
+      this.updateActivatedWeeks();
       this.queryClassLessons();
     },
 
@@ -161,28 +165,36 @@ export default {
   },
 
   methods: {
-
     queryClassLessons() {
       if (!!this.selectedWeek && !!this.selectedWeek) {
         // console.log("New Request")
-        Utils.newQuery(`/api/term/${this.term}/class/${this.selectedClass}/course`, {
-          // class: this.selectedClass,
-          week: this.selectedWeek,
-          excludedType: this.selectedExcludedTypes
-        }).then(response => {
+        Utils.newQuery(
+          `/api/term/${this.term}/class/${this.selectedClass}/course`,
+          {
+            // class: this.selectedClass,
+            week: this.selectedWeek,
+            excludedType: this.selectedExcludedTypes
+          }
+        ).then(response => {
           this.queryResult = response.data;
         });
       }
     },
 
-    onClassChanged(newClass) {
-      Utils.newRequest(`/api/term/${this.term}/class/${newClass}/weeks`).then(
-        r => (this.activatedWeekList = r.data.weeks)
-      );
+    updateActivatedWeeks() {
+      Utils.newRequest(
+        `/api/term/${this.term}/class/${this.selectedClass}/weeks`
+      ).then(r => (this.activatedWeekList = r.data.weeks));
+    }
 
-      this.selectedClass = newClass;
-      this.$refs.weekBar.select(this.selectedWeek);
-    },
+    // onClassChanged(newClass) {
+    //   Utils.newRequest(`/api/term/${this.term}/class/${newClass}/weeks`).then(
+    //     r => (this.activatedWeekList = r.data.weeks)
+    //   );
+
+    //   this.selectedClass = newClass;
+    //   this.$refs.weekBar.select(this.selectedWeek);
+    // }
 
     // onWeekChanged(newWeek) {
     //   this.selectedWeek = newWeek;
@@ -190,14 +202,14 @@ export default {
   },
 
   computed: {
-    switcherLabel: () => this.listMode ? "周列表" : "日列表"
+    switcherLabel: () => (this.listMode ? "周列表" : "日列表")
   }
 };
 </script>
 
 <style scoped>
-.view_trigger{
-  margin: 0 3pt
+.view_trigger {
+  margin: 0 3pt;
 }
 </style>
 

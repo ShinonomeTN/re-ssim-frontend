@@ -169,7 +169,7 @@ export default {
           this.termHistories = r.data;
         })
         .catch(error => {
-          if(error.response){
+          if (error.response) {
             UX.toastWarning("获取数据错误");
             this.backToFunctionList();
 
@@ -191,7 +191,7 @@ export default {
 
 <style scoped>
 .center-container {
-  padding-top: 10pt; 
+  padding-top: 10pt;
   padding-bottom: 10pt;
 }
 </style>

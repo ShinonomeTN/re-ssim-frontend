@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
     <!-- Full list view -->
     <div v-if="data && data.length > 0" class="ll-container">
       <weekday-bar class="mu-elevation-2" v-model="currentDay"></weekday-bar>
@@ -25,7 +25,7 @@ import WeekDayBar from "@/components/weekdayBar";
 import DayItem from "./lessonListDayItem";
 
 export default {
-  name : "pc-lesson-week-page",
+  name: "pc-lesson-week-page",
 
   props: {
     data: {
@@ -45,12 +45,12 @@ export default {
   },
 
   components: {
-    "weekday-bar" : WeekDayBar,
+    "weekday-bar": WeekDayBar,
     DayItem
   },
 
-  data : () => ({
-    currentDay : 1
+  data: () => ({
+    currentDay: 1
   }),
 
   methods: {
@@ -58,14 +58,14 @@ export default {
       const data = this.data;
       var result = {};
 
-      for(var i = 0; i < data.length; i++) {
+      for (var i = 0; i < data.length; i++) {
         const item = data[i];
-        if(item.timePoint.day === day) {
+        if (item.timePoint.day === day) {
           result[`${item.timePoint.turn}`] = item.lessons;
         }
       }
 
-      return result
+      return result;
     }
   }
 };

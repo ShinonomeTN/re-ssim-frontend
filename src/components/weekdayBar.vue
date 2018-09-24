@@ -7,7 +7,7 @@
           @click="_onClick(weekday)">
           
           {{weekNameMapping[weekday-1]}}
-
+          
     </button>
   </div>
 </template>

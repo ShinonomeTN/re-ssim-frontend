@@ -1,12 +1,12 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-import pcRouting from './pc';
+import pcRouting from "./pc";
 import staffRouting from "./staff";
 
 import Utils from "@/commons/utils";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routeMapping = [
   // mode: 'hash|history|abstract',
@@ -14,9 +14,9 @@ const routeMapping = [
   // linkActiveClass: 'router-link-active',
   // scrollBehavior: fn
   {
-    path: '/',
-    beforeEnter(to, from, next) {
-      if (Utils.client.isPc) next("/pc")
+    path: "/",
+    beforeEnter(_, __, next) {
+      if (Utils.client.isPc) next("/pc");
       else next("/mobile");
     }
   },
@@ -29,15 +29,15 @@ const routeMapping = [
 
   // Error
   {
-    path: 'error',
+    path: "error",
     component: {
-      template: '<div>Ooops, something goes wrong.</div>'
+      template: "<div>Ooops, something goes wrong.</div>"
     }
   },
 
   // 404 置后
   {
-    path: '*',
+    path: "*",
     component: {
       // beforeCreate() {
       //   window.swal({
@@ -48,10 +48,10 @@ const routeMapping = [
       //   })
       //   this.$router.replace('/')
       // },
-      template: '<div>Ooops, nothing here</div>'
+      template: "<div>Ooops, nothing here</div>"
     }
   }
-]
+];
 
 const router = new VueRouter({
   routes: routeMapping
