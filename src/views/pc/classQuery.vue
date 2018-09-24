@@ -30,7 +30,7 @@
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
-              <mu-select v-model="selectedexcludedTypes" chips multiple full-width no-data-text="空">
+              <mu-select v-model="selectedExcludedTypes" chips multiple full-width no-data-text="空">
                 <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
               </mu-select>
             </div>
@@ -42,7 +42,12 @@
       <div class="col col-lg-8">
         <div style="">
           <!-- Week range list -->
-          <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" @changed="onWeekChanged($event)"></week-bar>
+          <week-bar ref="weekBar" 
+                    class="mu-elevation-4" 
+                    :max="maxWeek" 
+                    :min="minWeek" 
+                    :activated="activatedWeekList" 
+                    v-model="selectedWeek"></week-bar>
         </div>
 
         <div style="margin: 10pt 5pt 0 0;">
@@ -118,7 +123,7 @@ export default {
 
       selectedClass: "",
       selectedWeek: "",
-      selectedexcludedTypes: [],
+      selectedExcludedTypes: [],
 
       queryResult: []
     };
@@ -150,7 +155,7 @@ export default {
       this.queryClassLessons();
     },
 
-    selectedexcludedTypes(newValue, oldValue) {
+    selectedExcludedTypes(newValue, oldValue) {
       this.queryClassLessons();
     }
   },
@@ -158,12 +163,12 @@ export default {
   methods: {
 
     queryClassLessons() {
-      if (this.selectedWeek && this.selectedWeek) {
+      if (!!this.selectedWeek && !!this.selectedWeek) {
         // console.log("New Request")
         Utils.newQuery(`/api/term/${this.term}/class/${this.selectedClass}/course`, {
           // class: this.selectedClass,
           week: this.selectedWeek,
-          excludedType: this.selectedexcludedTypes
+          excludedType: this.selectedExcludedTypes
         }).then(response => {
           this.queryResult = response.data;
         });
@@ -179,9 +184,9 @@ export default {
       this.$refs.weekBar.select(this.selectedWeek);
     },
 
-    onWeekChanged(newWeek) {
-      this.selectedWeek = newWeek;
-    }
+    // onWeekChanged(newWeek) {
+    //   this.selectedWeek = newWeek;
+    // }
   },
 
   computed: {

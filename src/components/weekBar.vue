@@ -9,7 +9,7 @@
                 justify-content="center" 
                 fill 
                 class="week-button" 
-                v-bind:class="{available : activated.includes(index), activated : current === index}" 
+                v-bind:class="{available : activated.includes(index), activated : value === index}" 
                 tag="button"
                 @click="_onWeekButtonClick(index)">
 
@@ -22,6 +22,11 @@
 
 <script>
 export default {
+  model: {
+    prop: "value",
+    event: "changed"
+  },
+
   props: {
     max: {
       type: Number,
@@ -36,20 +41,25 @@ export default {
     activated: {
       type: Array,
       default: []
+    },
+
+    value: {
+      type: Number,
+      default: 0
     }
   },
 
-  data() {
-    return {
-      current: 0
-    };
-  },
+  // data() {
+  //   return {
+  //     current: 0,
+  //   };
+  // },
 
   methods: {
     _onWeekButtonClick(index) {
       if (!this.activated.includes(index)) return;
 
-      this.current = index;
+      // this.current = index;
       this.$emit("changed", index);
     },
 
@@ -59,13 +69,14 @@ export default {
     },
 
     clearSelected() {
-      this.current = 0;
+      // this.current = 0;
+      this.$emit("changed", 0);
     }
   },
 
   watch: {
     activated(newVal, oldVal) {
-      if (!this.activated.includes(this.current)) this.clearSelected();
+      if (!this.activated.includes(this.value)) this.clearSelected();
     }
   },
 

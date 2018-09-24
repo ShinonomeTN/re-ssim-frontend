@@ -100,6 +100,7 @@ export default {
       minWeek: 0,
 
       selectedTeacher: "",
+      selectedWeek: 0,
 
       queryResult: []
     };
@@ -116,19 +117,35 @@ export default {
     });
   },
 
+  // watch: {
+  //   selectedTeacher: (newVal, oldVal) => {
+  //     if (!!this.selectedTeacher && !!this.selectedWeek) {
+
+  //     }
+  //   }
+  // },
+
   methods: {
     onTeacherChanged() {
       Utils.newRequest(
         `/api/term/${this.term}/teacher/${this.selectedTeacher}/weeks`
       ).then(resp => {
         this.activatedWeeks = resp.data.weeks;
+        if (!!this.selectedTeacher && !!this.selectedWeek)
+          this.query(this.selectedTeacher, this.selectedWeek);
       });
     },
 
+    query(teacherName, week) {
+      Utils.newRequest(
+        `/api/term/${this.term}/teacher/${teacherName}/course?week=${week}`
+      ).then(resp => (this.queryResult = resp.data));
+    },
+
     onWeekChanged(week) {
-      Utils.newRequest(`/api/term/${this.term}/teacher/${this.selectedTeacher}/course?week=${week}`).then(resp => {
-        this.queryResult = resp.data;
-      })
+      this.selectedWeek = week;
+      if (!!this.selectedTeacher && !!this.selectedWeek)
+        this.query(this.selectedTeacher, this.selectedWeek);
     }
   }
 };
