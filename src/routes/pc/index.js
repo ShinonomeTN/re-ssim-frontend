@@ -50,8 +50,7 @@ export default {
     //
     {
       path: "term/:term/courses",
-      // component: resolve => require(["@/views/pc/courseList"], resolve),
-      component: import("@/views/pc/courseList"),
+      component: resolve => require(["@/views/pc/courseList"], resolve),
       props: true
     },
     {

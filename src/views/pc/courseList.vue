@@ -50,7 +50,7 @@ import axios from "axios";
 
 const groupBy = $ressim.collections.groupBy;
 
-export default Promise.resolve({
+export default {
   name: "pc-course-list",
 
   props: {
@@ -68,7 +68,7 @@ export default Promise.resolve({
       this.courseList = groupBy(response.data, "unit");
     });
   }
-});
+};
 </script>
 
 <style scoped>
