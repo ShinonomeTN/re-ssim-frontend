@@ -1,12 +1,5 @@
 {
-<<<<<<< HEAD
-  "presets": [
-    ["env", { "modules": false }],
-    "stage-2"
-  ],
-=======
   "presets": [["env", { "modules": false }], "stage-2"],
->>>>>>> catten@fix_0
   "plugins": ["transform-runtime"],
   "comments": false
 }
