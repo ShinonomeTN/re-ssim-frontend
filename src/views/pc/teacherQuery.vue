@@ -22,7 +22,7 @@
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">教师</div>
-              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable @change="onTeacherChanged()">
+              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable>
                 <mu-option v-for="teacherName in teacherList" :key="teacherName" :label="teacherName" :value="teacherName"></mu-option>
               </mu-select>
             </div>
@@ -124,27 +124,28 @@ export default {
     });
   },
 
-  methods: {
-    onTeacherChanged() {
-      Utils.newRequest(
-        `/api/term/${this.term}/teacher/${this.selectedTeacher}/weeks`
-      ).then(resp => {
-        this.activatedWeeks = resp.data.weeks;
-        if (!!this.selectedTeacher && !!this.selectedWeek)
-          this.query(this.selectedTeacher, this.selectedWeek);
-      });
+  watch: {
+    selectedWeek(newVal, oldVal) {
+      if (this.selectedTeacher)
+        this.query(this.selectedTeacher, newVal);
     },
 
+    selectedTeacher(newVal, oldVal) {
+      Utils.newRequest(
+        `/api/term/${this.term}/teacher/${newVal}/weeks`
+      ).then(resp => {
+        this.activatedWeeks = resp.data.weeks;
+        if (this.selectedWeek)
+          this.query(newVal, this.selectedWeek);
+      });
+    }
+  },
+
+  methods: {
     query(teacherName, week) {
       Utils.newRequest(
         `/api/term/${this.term}/teacher/${teacherName}/course?week=${week}`
       ).then(resp => (this.queryResult = resp.data));
-    },
-
-    onWeekChanged(week) {
-      this.selectedWeek = week;
-      if (!!this.selectedTeacher && !!this.selectedWeek)
-        this.query(this.selectedTeacher, this.selectedWeek);
     }
   }
 };
