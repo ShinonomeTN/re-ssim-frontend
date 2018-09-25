@@ -36,12 +36,12 @@
                     </mu-list-item-action>
                     <mu-list-item-title>{{item.title}}</mu-list-item-title>
                   </mu-list-item>
-                  <mu-list-item button @click="enterSelectTerm()" class="list-group-item">
+                  <!-- <mu-list-item button @click="enterSelectTerm()" class="list-group-item">
                     <mu-list-item-action>
                       <mu-icon value="history"></mu-icon>
                     </mu-list-item-action>
                     <mu-list-item-title>历史学期</mu-list-item-title>
-                  </mu-list-item>
+                  </mu-list-item> -->
                 </mu-list>
               </div>
             </mu-col>

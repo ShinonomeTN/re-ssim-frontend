@@ -19,7 +19,9 @@
 
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-            <mu-button full-width>{{term}}</mu-button>
+            <!-- <mu-button full-width>{{term}}</mu-button> -->
+            <term-choosing v-model="term" @changed="onTermChanged($event)"></term-choosing>
+
           </div>
 
           <div>
@@ -92,6 +94,7 @@ import axios from "axios";
 import WeekBar from "@/components/weekBar";
 
 import ClassChoosing from "./classQuery/classChoosing";
+import TermChoosing from "./classQuery/termChoosing";
 
 import LessonList from "./classQuery/lessonList";
 import LessonWeekPage from "./classQuery/lessonWeekPage";
@@ -103,7 +106,8 @@ export default {
     WeekBar,
     ClassChoosing,
     LessonList,
-    LessonWeekPage
+    LessonWeekPage,
+    TermChoosing
   },
 
   props: {
@@ -179,6 +183,10 @@ export default {
           this.queryResult = response.data;
         });
       }
+    },
+
+    onTermChanged(term) {
+      this.$router.push(`/pc/term/${term}/class`);
     },
 
     updateActivatedWeeks() {
