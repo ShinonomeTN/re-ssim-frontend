@@ -6,26 +6,15 @@
           <mu-button icon slot="left">
             <mu-icon value="event"></mu-icon>
           </mu-button>
-          <mu-button flat slot="right" v-if="menuState === 'select_history'" @click="backToFunctionList()">
-            <mu-icon left value="arrow_back"></mu-icon>
-            返回
-          </mu-button>
         </mu-appbar>
 
         <!-- Select function  -->
-        <div class="container-fluid center-container" v-if="menuState === 'select_function'">
+        <div class="container-fluid center-container">
           <div class="row align-items-center">
             <mu-col span="6">
-              <div v-if="!term">
-                <h1 style="text-align:center">{{currentTerm}}<br>
-                  <small>{{`7 月 1 日，第${termWeek} 星期一`}}</small>
-                </h1>
-              </div>
-              <div v-else>
-                <h1 style="text-align:center">{{currentTerm}}<br>
-                  <small>历史学期</small>
-                </h1>
-              </div>
+              <h1 style="text-align:center">{{currentTerm}}<br>
+                <small>{{`7 月 1 日，第${termWeek} 星期一`}}</small>
+              </h1>
             </mu-col>
             <mu-col span='6' style="border-left: 1pt solid lightgray;">
               <div>
@@ -36,41 +25,7 @@
                     </mu-list-item-action>
                     <mu-list-item-title>{{item.title}}</mu-list-item-title>
                   </mu-list-item>
-                  <!-- <mu-list-item button @click="enterSelectTerm()" class="list-group-item">
-                    <mu-list-item-action>
-                      <mu-icon value="history"></mu-icon>
-                    </mu-list-item-action>
-                    <mu-list-item-title>历史学期</mu-list-item-title>
-                  </mu-list-item> -->
                 </mu-list>
-              </div>
-            </mu-col>
-          </div>
-        </div>
-
-        <!-- Select history -->
-        <div class="container-fluid center-container" v-if="menuState === 'select_history'">
-          <div class="row align-items-center">
-            <mu-col span="6" style="text-align:center">
-              <mu-icon value="history" size="56" center></mu-icon>
-              <h1 style="margin-top:0">选择历史学期</h1>
-            </mu-col>
-            <mu-col span='6' style="border-left: 1pt solid lightgray;">
-              <div align="center">
-                <mu-circular-progress class="demo-circular-progress " :size="56" v-if="isLoadingTermHistories"></mu-circular-progress>
-                <div v-else style="height:208px; overflow-y: auto">
-                  <mu-list>
-                    <mu-list-item button v-for="(item,index) in termHistories" :key="index" @click="toTerm(item.name)" class="list-group-item">
-                      <mu-list-item-action v-if="item.name === currentTerm">
-                        <mu-badge content="当前" color="primary"></mu-badge>
-                      </mu-list-item-action>
-                      <mu-list-item-title>{{item.name}}</mu-list-item-title>
-                      <mu-list-item-action>
-                        <mu-badge :content="`${item.courseCount}`" color="secondary"></mu-badge>
-                      </mu-list-item-action>
-                    </mu-list-item>
-                  </mu-list>
-                </div>
               </div>
             </mu-col>
           </div>
@@ -122,70 +77,10 @@ export default {
   },
 
   computed: {
-    currentTerm: () => (this.term ? this.term : "2017-2018学年第二学期")
+    currentTerm: () => "2017-2018学年第二学期"
   },
 
-  methods: {
-    //
-    // UI status changing
-    //
-    enterSelectTerm() {
-      this.menuState = "select_history";
-
-      if (this.termHistories.length <= 0) {
-        this._updateHistoriesList();
-      }
-    },
-
-    toTerm(termName) {
-      if (termName === this.currentTerm) {
-        this.$router.push("/pc/current");
-      } else {
-        this.$router.push(`/pc/term/${termName}`);
-      }
-
-      this.backToFunctionList();
-    },
-
-    backToFunctionList() {
-      this.menuState = "select_function";
-    },
-
-    /**
-     *
-     * Helper methos
-     *
-     */
-    _updateHistoriesList() {
-      this.isLoadingTermHistories = true;
-
-      Utils.newRequest("/api/term")
-        .then(r => {
-          if (!r.data || r.data.length <= 0) {
-            this._handleEmptyHistories();
-            return;
-          }
-
-          this.termHistories = r.data;
-        })
-        .catch(error => {
-          if (error.response) {
-            UX.toastWarning("获取数据错误");
-            this.backToFunctionList();
-
-            console.log(error);
-          }
-        })
-        .then(() => {
-          this.isLoadingTermHistories = false;
-        });
-    },
-
-    _handleEmptyHistories() {
-      UX.toastWarning("无历史数据");
-      this.backToFunctionList();
-    }
-  }
+  methods: {}
 };
 </script>
 
