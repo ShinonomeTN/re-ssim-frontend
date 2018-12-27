@@ -1,14 +1,9 @@
 <template>
-  <mu-paper :z-depth="4" class="container-fuild" style="margin-top: 10pt; min-height: 400pt">
-    <mu-appbar style="width: 100%;" color="primary">
-      <div>
-        <p>教师课表</p>
-      </div>
-      <mu-button flat slot="right" @click="$router.go(-1)">
-        <mu-icon left value="arrow_back"></mu-icon>
-        返回
-      </mu-button>
-    </mu-appbar>
+  <mu-paper
+    :z-depth="4"
+    class="container-fuild"
+    style="margin-top: 10pt; min-height: 400pt"
+  >
 
     <div style="margin:10pt 10pt 0 0">
       <div class="row">
@@ -17,13 +12,26 @@
           <div style="padding: 3pt 10pt 10pt 10pt">
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-              <mu-button full-width>{{term}}</mu-button>
+              <term-choosing
+                v-model="term"
+                @changed="onTermChanged($event)"
+              ></term-choosing>
             </div>
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">教师</div>
-              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable>
-                <mu-option v-for="teacherName in teacherList" :key="teacherName" :label="teacherName" :value="teacherName"></mu-option>
+              <mu-select
+                v-model="selectedTeacher"
+                label="选择任课教师"
+                full-width
+                filterable
+              >
+                <mu-option
+                  v-for="teacherName in teacherList"
+                  :key="teacherName"
+                  :label="teacherName"
+                  :value="teacherName"
+                ></mu-option>
               </mu-select>
             </div>
           </div>
@@ -33,7 +41,14 @@
         <div class="col col-lg-8">
           <div>
             <!-- Week range list -->
-            <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeeks" v-model="selectedWeek"></week-bar>
+            <week-bar
+              ref="weekBar"
+              class="mu-elevation-4"
+              :max="currentTermInfo.maxWeek"
+              :min="currentTermInfo.minWeek"
+              :activated="activatedWeeks"
+              v-model="selectedWeek"
+            ></week-bar>
           </div>
 
           <div style="margin: 10pt 5pt 0 0;">
@@ -45,10 +60,17 @@
           </div>
 
           <div style="margin-top: 10pt">
-            <lesson-list v-if="listMode" :data="queryResult" placeholder="选择教师与周以查看课程">
+            <lesson-list
+              v-if="listMode"
+              :data="queryResult"
+              placeholder="选择教师与周以查看课程"
+            >
               <template slot-scope="scope">
                 <div>
-                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
+                  <mu-badge
+                    :content="scope.lesson.code"
+                    color="primary"
+                  ></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -57,10 +79,17 @@
               </template>
             </lesson-list>
 
-            <lesson-week-page v-else :data="queryResult" placeholder="选择教师与周以查看课程">
+            <lesson-week-page
+              v-else
+              :data="queryResult"
+              placeholder="选择教师与周以查看课程"
+            >
               <template slot-scope="scope">
                 <div>
-                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
+                  <mu-badge
+                    :content="scope.lesson.code"
+                    color="primary"
+                  ></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -77,10 +106,13 @@
 
 <script>
 import Utils from "@/commons/utils";
+import Toast from "muse-ui-toast";
 
 import WeekBar from "@/components/weekBar";
-import LessonList from "./classQuery/lessonList";
-import LessonWeekPage from "./classQuery/lessonWeekPage";
+import LessonList from "./components/lessonList";
+import LessonWeekPage from "./components/lessonWeekPage";
+
+import TermChoosing from "./components/termChoosing";
 
 export default {
   name: "pc-teacher-query",
@@ -92,19 +124,19 @@ export default {
   components: {
     WeekBar,
     LessonList,
-    LessonWeekPage
+    LessonWeekPage,
+    TermChoosing
   },
 
   data() {
     return {
       listMode: false,
 
-      teacherList: [],
-      courseTypeList: [],
-      activatedWeeks: [],
+      currentTermInfo: {},
 
-      maxWeek: 0,
-      minWeek: 0,
+      teacherList: [],
+      // courseTypeList: [],
+      activatedWeeks: [],
 
       selectedTeacher: "",
       selectedWeek: 0,
@@ -114,38 +146,59 @@ export default {
   },
 
   mounted() {
-    Utils.newRequest(`/api/term/${this.term}?teacher`).then(response => {
-      this.teacherList = response.data.teachers;
-    });
+    this.getCurrentTerm();
 
-    Utils.newRequest(`/api/term/${this.term}?weekRange`).then(response => {
-      this.maxWeek = response.data.max;
-      this.minWeek = response.data.min;
+    Utils.newRequest(`/api/term/${this.term}/teacher`).then(response => {
+      this.teacherList = response.data;
     });
   },
 
   watch: {
     selectedWeek(newVal, oldVal) {
-      if (this.selectedTeacher)
-        this.query(this.selectedTeacher, newVal);
+      if (this.selectedTeacher) this.query(this.selectedTeacher, newVal);
     },
 
     selectedTeacher(newVal, oldVal) {
-      Utils.newRequest(
-        `/api/term/${this.term}/teacher/${newVal}/weeks`
-      ).then(resp => {
-        this.activatedWeeks = resp.data.weeks;
-        if (this.selectedWeek)
-          this.query(newVal, this.selectedWeek);
-      });
+      Utils.newRequest(`/api/term/${this.term}/teacher/${newVal}/weeks`).then(
+        resp => {
+          this.activatedWeeks = resp.data;
+          if (this.selectedWeek) this.query(newVal, this.selectedWeek);
+        }
+      );
     }
   },
 
   methods: {
+    getCurrentTerm() {
+      const termList = this.$store.state.courseTermList;
+      if (termList.size === 0) {
+        Toast.error("没有学期数据");
+        this.$router.push("/");
+        return;
+      }
+
+      const calendar = this.$store.state.calendar;
+      this.currentTermInfo = termList.find((o, i, a) => {
+        if (this.term) return o.name === this.term;
+        else if (calendar.term) return o.name === calendar.term;
+        else return i === 0;
+      });
+
+      if (this.currentTermInfo == null) {
+        Toast.error("没有学期数据");
+        this.$router.push("/");
+        return;
+      }
+    },
+
     query(teacherName, week) {
       Utils.newRequest(
         `/api/term/${this.term}/teacher/${teacherName}/course?week=${week}`
       ).then(resp => (this.queryResult = resp.data));
+    },
+
+    onTermChanged(term) {
+      this.$router.push(`/pc/term/${term}/teacher`);
     }
   }
 };

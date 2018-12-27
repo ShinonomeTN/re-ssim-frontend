@@ -1,33 +1,35 @@
-var webpack = require('webpack'),
-  PORTS = require('./config/PORTS'),
-  config = require('./webpack.base.conf'),
-  ExtractTextPlugin = require('extract-text-webpack-plugin'),
-  BrowserSyncPlugin = require('browser-sync-webpack-plugin'),
-  FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const webpack = require('webpack');
 
-config.output.filename = '[name].js';
-config.output.chunkFilename = '[id].js';
+const Ports = require('./config/PORTS');
+const Config = require('./webpack.base.conf');
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+
+Config.output.filename = '[name].js';
+Config.output.chunkFilename = '[id].js';
 
 // add hot-reload related code to entry chunk
-config.entry.app = [
+Config.entry.app = [
   'eventsource-polyfill',
   'webpack-hot-middleware/client?reload=true',
-  config.entry.app
+  Config.entry.app
 ];
 
-config.plugins.push(
+Config.plugins.push(
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
   new FriendlyErrorsPlugin(),
   new ExtractTextPlugin('[name].css'),
   new BrowserSyncPlugin({
     host: 'localhost',
-    port: PORTS.BROWSER_SYNC,
-    proxy: 'localhost:' + PORTS.DEV_SERVER,
+    port: Ports.forBrowserSync,
+    proxy: 'localhost:' + Ports.forDevServer,
     notify: false
   }, {
     reload: false
   })
 );
 
-module.exports = config;
+module.exports = Config;

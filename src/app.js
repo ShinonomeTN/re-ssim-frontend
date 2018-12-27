@@ -1,6 +1,7 @@
 /* 启动文件 */
 import Vue from "vue";
 import router from "@/routes/";
+import store from "@/store";
 import App from "@/components/App";
 
 // Vue selector
@@ -20,13 +21,18 @@ Vue.use(MuseUI);
 // Muse UI toast
 import Toast from "muse-ui-toast";
 Vue.use(Toast, {
-  position: "top"
+  position: "top",
+  time: 2000
 });
+
+import postInit from "@/init";
+postInit();
 
 /* eslint-disable no-new */
 new Vue({
   el: "#app",
   router,
+  store,
   render: h => h(App)
 });
 

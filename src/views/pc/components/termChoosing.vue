@@ -33,6 +33,7 @@
 
 <script>
 import Utils from "@/commons/utils";
+import Toast from "muse-ui-toast";
 
 export default {
   name: "pc-term-choosing",
@@ -78,7 +79,7 @@ export default {
       Utils.newRequest("/api/term")
         .then(r => {
           if (!r.data || r.data.length <= 0) {
-            this.$toast.message("无数据");
+            Toast.message("无数据");
             return;
           }
 

@@ -1,14 +1,15 @@
-var webpack = require('webpack'),
-  config = require('./webpack.base.conf'),
-  ExtractTextPlugin = require('extract-text-webpack-plugin'),
-  OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const Webpack = require('webpack');
+const Config = require('./webpack.base.conf');
 
-config.output.filename = 'js/[name].[chunkhash:6].js';
-config.output.chunkFilename = 'js/[id].[chunkhash:6].js';
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-config.plugins.push(
-  new webpack.optimize.OccurrenceOrderPlugin(),
-  new webpack.optimize.UglifyJsPlugin({
+Config.output.filename = 'js/[name].[chunkhash:6].js';
+Config.output.chunkFilename = 'js/[id].[chunkhash:6].js';
+
+Config.plugins.push(
+  new Webpack.optimize.OccurrenceOrderPlugin(),
+  new Webpack.optimize.UglifyJsPlugin({
     beautify: false,
     comments: false,
     compress: {
@@ -17,12 +18,12 @@ config.plugins.push(
       reduce_vars: true
     }
   }),
-  new webpack.optimize.CommonsChunkPlugin({
+  new Webpack.optimize.CommonsChunkPlugin({
     name: 'manifest',
     minChunks: Infinity
   }),
-  new webpack.optimize.AggressiveMergingPlugin(),
-  new webpack.optimize.MinChunkSizePlugin({
+  new Webpack.optimize.AggressiveMergingPlugin(),
+  new Webpack.optimize.MinChunkSizePlugin({
     minChunkSize: 30000
   }),
   new ExtractTextPlugin({
@@ -36,4 +37,4 @@ config.plugins.push(
   })
 );
 
-module.exports = config;
+module.exports = Config;

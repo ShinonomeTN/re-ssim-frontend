@@ -1,16 +1,9 @@
 <template>
-  <mu-paper :z-depth="4" class="container-fuild" style="margin:10pt; min-height: 400pt">
-
-    <!-- App Bar -->
-    <mu-appbar style="width: 100%;" color="primary">
-      <div>
-        <p>班级课表</p>
-      </div>
-      <mu-button flat slot="right" @click="$router.go(-1)">
-        <mu-icon left value="arrow_back"></mu-icon>
-        返回
-      </mu-button>
-    </mu-appbar>
+  <mu-paper
+    :z-depth="4"
+    class="container-fuild"
+    style="margin:10pt; min-height: 400pt"
+  >
 
     <div class="row">
       <!-- Term info, class choosing and exclude type choosing -->
@@ -20,19 +13,36 @@
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
             <!-- <mu-button full-width>{{term}}</mu-button> -->
-            <term-choosing v-model="term" @changed="onTermChanged($event)"></term-choosing>
+            <term-choosing
+              v-model="term"
+              @changed="onTermChanged($event)"
+            ></term-choosing>
 
           </div>
 
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">班级</div>
-            <class-choosing :term="term" v-model="selectedClass"></class-choosing>
+            <class-choosing
+              :term="term"
+              v-model="selectedClass"
+            ></class-choosing>
           </div>
 
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
-            <mu-select v-model="selectedExcludedTypes" chips multiple full-width no-data-text="空">
-              <mu-option v-for="(item,index) in courseTypeList" :key="index" :label="item" :value="item"></mu-option>
+            <mu-select
+              v-model="selectedExcludedTypes"
+              chips
+              multiple
+              full-width
+              no-data-text="空"
+            >
+              <mu-option
+                v-for="(item,index) in currentTermInfo.courseTypes"
+                :key="index"
+                :label="item"
+                :value="item"
+              ></mu-option>
             </mu-select>
           </div>
 
@@ -44,7 +54,14 @@
 
           <div style="">
             <!-- Week range list -->
-            <week-bar ref="weekBar" class="mu-elevation-4" :max="maxWeek" :min="minWeek" :activated="activatedWeekList" v-model="selectedWeek"></week-bar>
+            <week-bar
+              ref="weekBar"
+              class="mu-elevation-4"
+              :max="currentTermInfo.maxWeek"
+              :min="currentTermInfo.minWeek"
+              :activated="activatedWeekList"
+              v-model="selectedWeek"
+            ></week-bar>
           </div>
 
           <div style="margin: 10pt 5pt 0 0;">
@@ -56,10 +73,16 @@
           </div>
 
           <div style="margin-top: 10pt">
-            <lesson-list v-if="listMode" :data="queryResult">
+            <lesson-list
+              v-if="listMode"
+              :data="queryResult"
+            >
               <template slot-scope="scope">
                 <div>
-                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
+                  <mu-badge
+                    :content="scope.lesson.code"
+                    color="primary"
+                  ></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -68,10 +91,16 @@
               </template>
             </lesson-list>
 
-            <lesson-week-page v-else :data="queryResult">
+            <lesson-week-page
+              v-else
+              :data="queryResult"
+            >
               <template slot-scope="scope">
                 <div>
-                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
+                  <mu-badge
+                    :content="scope.lesson.code"
+                    color="primary"
+                  ></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -89,15 +118,15 @@
 
 <script>
 import Utils from "@/commons/utils";
-import axios from "axios";
+import Toast from "muse-ui-toast";
 
 import WeekBar from "@/components/weekBar";
 
-import ClassChoosing from "./classQuery/classChoosing";
-import TermChoosing from "./classQuery/termChoosing";
+import ClassChoosing from "./components/classChoosing";
+import TermChoosing from "./components/termChoosing";
 
-import LessonList from "./classQuery/lessonList";
-import LessonWeekPage from "./classQuery/lessonWeekPage";
+import LessonList from "./components/lessonList";
+import LessonWeekPage from "./components/lessonWeekPage";
 
 export default {
   name: "pc-class-query",
@@ -116,16 +145,13 @@ export default {
 
   data: () => {
     return {
+      currentTermInfo: {},
+
       listMode: false,
 
-      classList: [],
-
-      maxWeek: 0,
-      minWeek: 0,
       activatedWeekList: [],
 
       // Course type
-      courseTypeList: [],
       courseTypeExcludeList: {},
 
       selectedClass: "",
@@ -137,20 +163,7 @@ export default {
   },
 
   mounted() {
-    console.log(`${this.maxWeek} <- ${this.minWeek}`);
-
-    Utils.newRequest(`/api/term/${this.term}?class`).then(response => {
-      this.classList = response.data.classes;
-    });
-
-    Utils.newRequest(`/api/term/${this.term}?weekRange`).then(response => {
-      this.maxWeek = response.data.max;
-      this.minWeek = response.data.min;
-    });
-
-    Utils.newRequest(`/api/term/${this.term}?classType`).then(response => {
-      this.courseTypeList = response.data.classTypes;
-    });
+    this.getCurrentTerm();
   },
 
   watch: {
@@ -169,6 +182,28 @@ export default {
   },
 
   methods: {
+    getCurrentTerm() {
+      const termList = this.$store.state.courseTermList;
+      if (termList.size === 0) {
+        Toast.error("没有学期数据");
+        this.$router.push("/");
+        return;
+      }
+
+      const calendar = this.$store.state.calendar;
+      this.currentTermInfo = termList.find((o, i, a) => {
+        if (this.term) return o.name === this.term;
+        else if (calendar.term) return o.name === calendar.term;
+        else return i === 0;
+      });
+
+      if (this.currentTermInfo == null) {
+        Toast.error("没有学期数据");
+        this.$router.push("/");
+        return;
+      }
+    },
+
     queryClassLessons() {
       if (!!this.selectedWeek && !!this.selectedWeek) {
         // console.log("New Request")
@@ -191,26 +226,15 @@ export default {
 
     updateActivatedWeeks() {
       Utils.newRequest(
-        `/api/term/${this.term}/class/${this.selectedClass}/weeks`
-      ).then(r => (this.activatedWeekList = r.data.weeks));
+        `/api/term/${this.term}/class/${this.selectedClass}/week`
+      ).then(r => (this.activatedWeekList = r.data));
     }
-
-    // onClassChanged(newClass) {
-    //   Utils.newRequest(`/api/term/${this.term}/class/${newClass}/weeks`).then(
-    //     r => (this.activatedWeekList = r.data.weeks)
-    //   );
-
-    //   this.selectedClass = newClass;
-    //   this.$refs.weekBar.select(this.selectedWeek);
-    // }
-
-    // onWeekChanged(newWeek) {
-    //   this.selectedWeek = newWeek;
-    // }
   },
 
   computed: {
-    switcherLabel: () => (this.listMode ? "周列表" : "日列表")
+    switcherLabel() {
+      return this.listMode ? "周列表" : "日列表";
+    }
   }
 };
 </script>

@@ -1,16 +1,41 @@
 <template>
-  <div class="mupaper mupaper-round mu-elevation-4" style="display: flex; background : #FFFFFF; margin-bottom: 10pt">
-    <div class="week_head" v-if="weekday" :class="{head_activated : !noData}">{{weekday}}</div>
+  <div
+    class="mupaper mupaper-round mu-elevation-4"
+    style="display: flex; background : #FFFFFF; margin-bottom: 10pt"
+  >
+    <div
+      class="week_head"
+      v-if="weekday"
+      :class="{head_activated : !noData}"
+    >{{weekday}}</div>
     <!-- Turn list -->
-    <div class="lesson_turns" v-if="!noData">
-      <div v-for="lessonHead in maxLessonCount" :key="lessonHead" class="ll-container" style="padding : 2pt 2pt 2pt 0 ;flex-direction: row;">
+    <div
+      class="lesson_turns"
+      v-if="!noData"
+    >
+      <div
+        v-for="lessonHead in maxLessonCount"
+        :key="lessonHead"
+        class="ll-container"
+        style="padding : 2pt 2pt 2pt 0 ;flex-direction: row;"
+      >
         <!-- Turn header -->
-        <div class="turn_head ll-container" :class="{ head_activated : data[`${lessonHead}`] }">{{lessonHead}}</div>
+        <div
+          class="turn_head ll-container"
+          :class="{ head_activated : data[`${lessonHead}`] }"
+        >{{lessonHead}}</div>
         <!-- Lesson content -->
         <div style="flex-grow:1">
-          <div v-for="(lesson,index) in data[`${lessonHead}`]" :key="index">
+          <div
+            v-for="(lesson,index) in data[`${lessonHead}`]"
+            :key="index"
+          >
             <!-- Slot for customize content -->
-            <slot v-bind:lesson="lesson" v-if="lesson" class="turn_item">
+            <slot
+              v-bind:lesson="lesson"
+              v-if="lesson"
+              class="turn_item"
+            >
               {{lesson}}
             </slot>
           </div>
@@ -19,22 +44,29 @@
     </div>
 
     <!-- If data is empty -->
-    <div v-else class="ll-container" style="justify-content: center; aligin-items:center">
-      <div class="turn-head" style="margin-left: 10pt; padding : 10pt">无课</div>
+    <div
+      v-else
+      class="ll-container"
+      style="justify-content: center; aligin-items:center"
+    >
+      <div
+        class="turn-head"
+        style="margin-left: 10pt; padding : 10pt"
+      >无课</div>
     </div>
   </div>
 </template>
 
 <script>
-import Utils from "@/commons/utils";
+// import Utils from "@/commons/utils";
 
 export default {
-  name : "pc-lesson-day-item",
+  name: "pc-lesson-day-item",
 
   props: {
     weekday: {
       type: String,
-      defalut : ""
+      defalut: ""
     },
 
     maxLessonCount: {
@@ -48,7 +80,7 @@ export default {
     }
   },
 
-  computed : {
+  computed: {
     noData() {
       return Object.keys(this.data).length === 0;
     }

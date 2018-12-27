@@ -1,35 +1,29 @@
 <template>
-  <mu-container style="margin-top:100pt">
-    <div class="col-md-12 col-lg-8 offset-lg-2 ">
-      <mu-paper :z-depth='1'>
-        <mu-appbar style="width: 100%;" title="简单课表查询" color="primary">
-          <mu-button icon slot="left">
-            <mu-icon value="event"></mu-icon>
-          </mu-button>
-        </mu-appbar>
+  <mu-container style="margin-top:60pt">
+    <div class="col-md-5 col-lg-4">
+      <mu-paper
+        :z-depth='1'
+        style="padding: 10pt"
+      >
+        <!-- <mu-appbar title="校历" color="primary"></mu-appbar> -->
+        <school-calendar :calendar="this.$store.state.calendar"></school-calendar>
+      </mu-paper>
 
-        <!-- Select function  -->
-        <div class="container-fluid center-container">
-          <div class="row align-items-center">
-            <mu-col span="6">
-              <h1 style="text-align:center">{{currentTerm}}<br>
-                <small>{{`7 月 1 日，第${termWeek} 星期一`}}</small>
-              </h1>
-            </mu-col>
-            <mu-col span='6' style="border-left: 1pt solid lightgray;">
-              <div>
-                <mu-list>
-                  <mu-list-item button v-for="(item,index) in functionList" :key="index" @click="$router.push(item.to(currentTerm))" class="list-group-item">
-                    <mu-list-item-action>
-                      <mu-icon :value="item.icon"></mu-icon>
-                    </mu-list-item-action>
-                    <mu-list-item-title>{{item.title}}</mu-list-item-title>
-                  </mu-list-item>
-                </mu-list>
-              </div>
-            </mu-col>
-          </div>
-        </div>
+      <mu-paper :z-depth='1'>
+        <mu-list>
+          <mu-list-item
+            button
+            v-for="(item,index) in functionList"
+            :key="index"
+            @click="$router.push(item.to(currentTerm))"
+            class="list-group-item"
+          >
+            <mu-list-item-action>
+              <mu-icon :value="item.icon"></mu-icon>
+            </mu-list-item-action>
+            <mu-list-item-title>{{item.title}}</mu-list-item-title>
+          </mu-list-item>
+        </mu-list>
       </mu-paper>
     </div>
   </mu-container>
@@ -37,24 +31,34 @@
 
 <script>
 import Utils from "@/commons/utils";
-import UX from "@/commons/ux";
+import Toast from "muse-ui-toast";
+
+import SchoolCalendar from "@/components/schoolCalendar";
 
 export default {
   name: "pc-welcome",
 
-  props: {
-    term: String
+  components: {
+    SchoolCalendar
   },
 
-  data: () => {
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     vm.updateCalendar();
+  //     vm.updateTermList();
+  //   });
+  // },
+
+  mounted() {
+    // Utils.newRequest("/api/term/calendar").then(resp => {
+    //   const data = resp.data;
+    //   console.log(data);
+    //   if (data) this.calendar = data;
+    // });
+  },
+
+  data() {
     return {
-      termWeek: "二十周",
-
-      menuState: "select_function",
-
-      termHistories: [],
-      isLoadingTermHistories: false,
-
       // The function menu
       functionList: [
         {
@@ -77,10 +81,14 @@ export default {
   },
 
   computed: {
-    currentTerm: () => "2017-2018学年第二学期"
+    currentTerm() {
+      return this.$store.state.calendar.term;
+    }
   },
 
-  methods: {}
+  methods: {
+    
+  }
 };
 </script>
 

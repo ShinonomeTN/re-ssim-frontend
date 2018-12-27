@@ -1,10 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+import store from "@/store";
+
 import pcRouting from "./pc";
 import staffRouting from "./staff";
 
 import Utils from "@/commons/utils";
+// import store from ""
 
 Vue.use(VueRouter);
 
@@ -39,15 +42,6 @@ const routeMapping = [
   {
     path: "*",
     component: {
-      // beforeCreate() {
-      //   window.swal({
-      //     type: 'warning',
-      //     title: '功能或页面不存在',
-      //     timer: 1500,
-      //     showConfirmButton: false
-      //   })
-      //   this.$router.replace('/')
-      // },
       template: "<div>Ooops, nothing here</div>"
     }
   }
@@ -55,6 +49,13 @@ const routeMapping = [
 
 const router = new VueRouter({
   routes: routeMapping
+});
+
+router.beforeEach((to, form, next) => {
+  const metaInfo = to.meta;
+  if (metaInfo) store.commit("pushAppBarMeta", metaInfo);
+
+  next();
 });
 
 export default router;

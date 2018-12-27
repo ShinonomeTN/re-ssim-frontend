@@ -1,4 +1,5 @@
 import Utils from "@/commons/utils";
+import router from ".";
 
 export default {
   path: "/pc",
@@ -23,7 +24,7 @@ export default {
           .then(result => {
             let data = result.data;
 
-            if (!data.ping === "pong") alert("WTF? API CHANGED!");
+            if (data.ping !== "pong") alert("WTF? API CHANGED!");
 
             if (!data.db_available) {
               next("/pc/db_empty");
@@ -50,19 +51,30 @@ export default {
     //
     {
       path: "term/:term/courses",
-      // component: resolve => require(["@/views/pc/courseList"], resolve),
-      component: import("@/views/pc/courseList"),
-      props: true
+      component: resolve => require(["@/views/pc/courseList"], resolve),
+      props: true,
+      meta: {
+        title: "学院与课程",
+        navBack: true
+      }
     },
     {
       path: "term/:term/class",
       component: resolve => require(["@/views/pc/classQuery"], resolve),
-      props: true
+      props: true,
+      meta: {
+        title: "班级课表查询",
+        navBack: true
+      }
     },
     {
       path: "term/:term/teacher",
       component: resolve => require(["@/views/pc/teacherQuery"], resolve),
-      props: true
+      props: true,
+      meta: {
+        title: "教师课表查询",
+        navBack: true
+      }
     }
   ]
 };

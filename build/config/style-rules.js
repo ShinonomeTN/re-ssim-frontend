@@ -1,35 +1,46 @@
 // 参考但远优于 https://github.com/vuejs-templates/webpack/blob/master/template/build/utils.js
-var extract = require('extract-text-webpack-plugin').extract,
-  ENV = require('./ENV');
+var extract = require('extract-text-webpack-plugin').extract;
+var Environment = require('./ENV');
 
 // postcss-loader 配置见 .postcssrc
-var basicLoaders = ['css-loader', 'postcss-loader'];
-var LOADERS = {
+const basicLoaders = ['css-loader', 'postcss-loader'];
+
+var loaderMapping = {
   css: basicLoaders,
   less: basicLoaders.concat('less-loader'),
   sass: basicLoaders.concat('sass-loader?indentedSyntax=true'),
   scss: basicLoaders.concat('sass-loader')
 };
 
-function ruleGen(ext, isForVueLoader) {
-  var styleLoader = (isForVueLoader ? 'vue-' : '') + 'style-loader',
-    useLoaders = LOADERS[ext];
+function generateRules(ext, isForVueLoader) {
+  var styleLoader = (isForVueLoader ? 'vue-' : '') + 'style-loader';
+  var useLoaders = loaderMapping[ext];
 
   // 开发环境下直接内嵌 CSS 以支持热替换
-  if (ENV.__DEV__) return [styleLoader].concat(useLoaders);
+  if (Environment.isDevelopement) return [styleLoader].concat(useLoaders);
+
   // 生产环境下分离出 CSS 文件
   return extract({ use: useLoaders, fallback: styleLoader });
 }
 
-function styleRulesGen(isForVueLoader) {
+function generateStyleRules(isForVueLoader) {
   var rules = isForVueLoader ? {} : [];
-  Object.keys(LOADERS).forEach(function (ext) {
+
+  Object.keys(loaderMapping).forEach(function (ext) {
     isForVueLoader
-      ? rules[ext] = ruleGen(ext, true)
-      : rules.push({ test: new RegExp('\\.' + ext + '$'), use: ruleGen(ext) });
+      ? rules[ext] = generateRules(ext, true)
+      : rules.push({ test: new RegExp('\\.' + ext + '$'), use: generateRules(ext) });
   });
   return rules;
 }
 
-exports.basic = styleRulesGen();
-exports.vueLoader = styleRulesGen(true);
+function generateVueStyleRules(){
+  return generateStyleRules(true);
+}
+
+// Generate basic style rules
+exports.basic = generateStyleRules();
+exports.vueLoader = generateVueStyleRules();
+
+exports.basicStyleRuleLoaders = generateStyleRules();
+exports.vueStyleRuleLoaders = generateVueStyleRules();
