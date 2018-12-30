@@ -1,30 +1,36 @@
 <template>
   <mu-container style="margin-top:60pt">
-    <div class="col-md-5 col-lg-4">
-      <mu-paper
-        :z-depth='1'
-        style="padding: 10pt"
-      >
-        <!-- <mu-appbar title="校历" color="primary"></mu-appbar> -->
-        <school-calendar :calendar="this.$store.state.calendar"></school-calendar>
-      </mu-paper>
+    <div class="row">
+      <div class="col-md-7 col-lg-8">
 
-      <mu-paper :z-depth='1'>
-        <mu-list>
-          <mu-list-item
-            button
-            v-for="(item,index) in functionList"
-            :key="index"
-            @click="$router.push(item.to(currentTerm))"
-            class="list-group-item"
-          >
-            <mu-list-item-action>
-              <mu-icon :value="item.icon"></mu-icon>
-            </mu-list-item-action>
-            <mu-list-item-title>{{item.title}}</mu-list-item-title>
-          </mu-list-item>
-        </mu-list>
-      </mu-paper>
+      </div>
+      <div class="col-md-5 col-lg-4">
+        <mu-paper
+          :z-depth='1'
+          style="padding: 10pt"
+          round
+        >
+          <!-- <mu-appbar title="校历" color="primary"></mu-appbar> -->
+          <school-calendar :calendar="this.$store.state.calendar"></school-calendar>
+        </mu-paper>
+
+        <mu-paper :z-depth='1'>
+          <mu-list>
+            <mu-list-item
+              button
+              v-for="(item,index) in functionList"
+              :key="index"
+              @click="$router.push(item.to(currentTerm))"
+              class="list-group-item"
+            >
+              <mu-list-item-action>
+                <mu-icon :value="item.icon"></mu-icon>
+              </mu-list-item-action>
+              <mu-list-item-title>{{item.title}}</mu-list-item-title>
+            </mu-list-item>
+          </mu-list>
+        </mu-paper>
+      </div>
     </div>
   </mu-container>
 </template>
@@ -86,9 +92,7 @@ export default {
     }
   },
 
-  methods: {
-    
-  }
+  methods: {}
 };
 </script>
 

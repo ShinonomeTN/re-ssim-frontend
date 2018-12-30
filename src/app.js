@@ -14,6 +14,9 @@ import "muse-ui/dist/muse-ui.css";
 import "typeface-roboto";
 Vue.use(MuseUI);
 
+// import theme from 'muse-ui/lib/theme';
+// theme.use('dark');
+
 // Vue Toasted
 // import Toasted from "vue-toasted";
 // Vue.use(Toasted);
