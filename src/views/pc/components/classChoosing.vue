@@ -128,12 +128,13 @@ export default {
       this.isLoadingClasses = true;
       Utils.newRequest(`/api/term/${this.term}/class`)
         .then(response => {
-          if (!response.data) {
+          const data = response.data;
+          if (!data || data.length <= 0) {
             this._handleEmptyData();
             return;
           }
 
-          this.classList = response.data;
+          this.classList = data;
           this.classMapping = Business.buildClassTree(
             Business.splitClassNames(this.classList)
           );

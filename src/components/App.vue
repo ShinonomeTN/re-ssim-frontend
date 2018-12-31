@@ -2,9 +2,14 @@
   <div>
     <mu-appbar color="primary">
       <span>{{!appBarMeta.title ? "简单课表查询" : appBarMeta.title}}</span>
-      <mu-button v-if="appBarMeta.navBack" flat slot="right" @click="$router.go(-1)" >
+
+      <mu-button v-if="appBarMeta.navBack" flat slot="right" @click="$router.push('/')">
         <mu-icon left value="arrow_back"></mu-icon>
-        <span>返回</span>
+        <span>首页</span>
+      </mu-button>
+
+      <mu-button v-if="!appBarMeta.navBack && appBarMeta.userMenu" flat slot="right">
+        
       </mu-button>
     </mu-appbar>
     <div class="container">

@@ -1,9 +1,5 @@
 <template>
-  <mu-paper
-    :z-depth="4"
-    class="container-fuild"
-    style="margin:10pt; min-height: 400pt"
-  >
+  <mu-paper :z-depth="4" class="container-fuild" style="margin:10pt; min-height: 400pt">
 
     <div class="row">
       <!-- Term info, class choosing and exclude type choosing -->
@@ -12,37 +8,19 @@
 
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-            <!-- <mu-button full-width>{{term}}</mu-button> -->
-            <term-choosing
-              v-model="term"
-              @changed="onTermChanged($event)"
-            ></term-choosing>
+            <term-choosing v-model="term" @changed="onTermChanged($event)"></term-choosing>
 
           </div>
 
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">班级</div>
-            <class-choosing
-              :term="term"
-              v-model="selectedClass"
-            ></class-choosing>
+            <class-choosing :term="term" v-model="selectedClass"></class-choosing>
           </div>
 
           <div>
             <div style="padding:5pt 0pt; font-size: 17px">排除课程类型</div>
-            <mu-select
-              v-model="selectedExcludedTypes"
-              chips
-              multiple
-              full-width
-              no-data-text="空"
-            >
-              <mu-option
-                v-for="(item,index) in currentTermInfo.courseTypes"
-                :key="index"
-                :label="item"
-                :value="item"
-              ></mu-option>
+            <mu-select v-model="selectedExcludedTypes" chips multiple full-width no-data-text="空">
+              <mu-option v-for="(item,index) in currentTermInfo.courseTypes" :key="index" :label="item" :value="item"></mu-option>
             </mu-select>
           </div>
 
@@ -54,14 +32,8 @@
 
           <div style="">
             <!-- Week range list -->
-            <week-bar
-              ref="weekBar"
-              class="mu-elevation-4"
-              :max="currentTermInfo.maxWeek"
-              :min="currentTermInfo.minWeek"
-              :activated="activatedWeekList"
-              v-model="selectedWeek"
-            ></week-bar>
+            <week-bar ref="weekBar" class="mu-elevation-4" :max="currentTermInfo.maxWeek" :min="currentTermInfo.minWeek"
+              :activated="activatedWeekList" v-model="selectedWeek"></week-bar>
           </div>
 
           <div style="margin: 10pt 5pt 0 0;">
@@ -73,16 +45,10 @@
           </div>
 
           <div style="margin-top: 10pt">
-            <lesson-list
-              v-if="listMode"
-              :data="queryResult"
-            >
+            <lesson-list v-if="listMode" :data="queryResult">
               <template slot-scope="scope">
                 <div>
-                  <mu-badge
-                    :content="scope.lesson.code"
-                    color="primary"
-                  ></mu-badge>
+                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -91,16 +57,10 @@
               </template>
             </lesson-list>
 
-            <lesson-week-page
-              v-else
-              :data="queryResult"
-            >
+            <lesson-week-page v-else :data="queryResult">
               <template slot-scope="scope">
                 <div>
-                  <mu-badge
-                    :content="scope.lesson.code"
-                    color="primary"
-                  ></mu-badge>
+                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -162,6 +122,11 @@ export default {
     };
   },
 
+  beforeRouterUpdate(_, next) {
+    this.getCurrentTerm();
+    next();
+  },
+
   mounted() {
     this.getCurrentTerm();
   },
@@ -196,6 +161,11 @@ export default {
         else if (calendar.term) return o.name === calendar.term;
         else return i === 0;
       });
+
+      if (this.currentTermInfo == null) {
+        Toast.error("没有当前校历的学期课程数据");
+        this.currentTermInfo = termList[0];
+      }
 
       if (this.currentTermInfo == null) {
         Toast.error("没有学期数据");

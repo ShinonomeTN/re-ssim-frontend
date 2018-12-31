@@ -1,20 +1,13 @@
 <template>
   <mu-container style="margin-top:60pt">
     <div class="row">
-      <div class="col-md-7 col-lg-8">
-
-      </div>
+      <div class="col-md-7 col-lg-8"></div>
       <div class="col-md-5 col-lg-4">
-        <mu-paper
-          :z-depth='1'
-          style="padding: 10pt"
-          round
-        >
-          <!-- <mu-appbar title="校历" color="primary"></mu-appbar> -->
+        <mu-paper :z-depth="1" style="padding: 10pt; margin-bottom: 10pt" round>
           <school-calendar :calendar="this.$store.state.calendar"></school-calendar>
         </mu-paper>
 
-        <mu-paper :z-depth='1'>
+        <mu-paper :z-depth="1" style="margin-bottom: 10pt">
           <mu-list>
             <mu-list-item
               button
@@ -27,6 +20,17 @@
                 <mu-icon :value="item.icon"></mu-icon>
               </mu-list-item-action>
               <mu-list-item-title>{{item.title}}</mu-list-item-title>
+            </mu-list-item>
+          </mu-list>
+        </mu-paper>
+
+        <mu-paper :z-depth="1">
+          <mu-list>
+            <mu-list-item button :ripple="false" class="list-group-item" @click="login()">
+              <mu-list-item-action>
+                <mu-icon value="info"></mu-icon>
+              </mu-list-item-action>
+              <mu-list-item-title>共 {{termList.length}} 个学期的数据</mu-list-item-title>
             </mu-list-item>
           </mu-list>
         </mu-paper>
@@ -48,23 +52,12 @@ export default {
     SchoolCalendar
   },
 
-  // beforeRouteEnter(to, from, next) {
-  //   next(vm => {
-  //     vm.updateCalendar();
-  //     vm.updateTermList();
-  //   });
-  // },
-
-  mounted() {
-    // Utils.newRequest("/api/term/calendar").then(resp => {
-    //   const data = resp.data;
-    //   console.log(data);
-    //   if (data) this.calendar = data;
-    // });
-  },
+  mounted() {},
 
   data() {
     return {
+      loginCounter: 0,
+
       // The function menu
       functionList: [
         {
@@ -89,10 +82,23 @@ export default {
   computed: {
     currentTerm() {
       return this.$store.state.calendar.term;
+    },
+
+    termList() {
+      return this.$store.state.courseTermList;
     }
   },
 
-  methods: {}
+  methods: {
+    login() {
+      if (this.loginCounter < 7) {
+        this.loginCounter++;
+      } else {
+        this.$router.push("/staff");
+        this.loginCounter = 0;
+      }
+    }
+  }
 };
 </script>
 

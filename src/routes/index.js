@@ -51,9 +51,10 @@ const router = new VueRouter({
   routes: routeMapping
 });
 
+// Route meta handler
 router.beforeEach((to, form, next) => {
-  const metaInfo = to.meta;
-  if (metaInfo) store.commit("pushAppBarMeta", metaInfo);
+  const appBarState = to.meta ? to.meta.appBar : null;
+  if (appBarState) store.commit("pushAppBarMeta", appBarState);
 
   next();
 });

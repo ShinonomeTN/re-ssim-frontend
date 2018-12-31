@@ -1,9 +1,9 @@
 import Utils from "@/commons/utils";
-import router from ".";
 
 export default {
   path: "/pc",
   component: require("@/views/pc/"),
+  // alias: "/",
   children: [
     //
     // Errors
@@ -54,8 +54,10 @@ export default {
       component: resolve => require(["@/views/pc/courseList"], resolve),
       props: true,
       meta: {
-        title: "学院与课程",
-        navBack: true
+        appBar: {
+          title: "学院与课程",
+          navBack: true
+        }
       }
     },
     {
@@ -63,8 +65,10 @@ export default {
       component: resolve => require(["@/views/pc/classQuery"], resolve),
       props: true,
       meta: {
-        title: "班级课表查询",
-        navBack: true
+        appBar: {
+          title: "班级课表查询",
+          navBack: true
+        }
       }
     },
     {
@@ -72,8 +76,10 @@ export default {
       component: resolve => require(["@/views/pc/teacherQuery"], resolve),
       props: true,
       meta: {
-        title: "教师课表查询",
-        navBack: true
+        appBar: {
+          title: "教师课表查询",
+          navBack: true
+        }
       }
     }
   ]

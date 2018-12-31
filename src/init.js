@@ -31,7 +31,7 @@ function updateTermList() {
     .then(r => {
       const data = r.data;
 
-      if (!data) {
+      if (!data || data.length <= 0) {
         Toast.warning("没有学期数据！");
       } else {
         store.commit("updateSchoolTerms", data);
@@ -43,7 +43,7 @@ function updateTermList() {
     });
 }
 
-export default () => {
+export default function() {
   updateCalendar();
   updateTermList();
 };

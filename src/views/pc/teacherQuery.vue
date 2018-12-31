@@ -1,37 +1,19 @@
 <template>
-  <mu-paper
-    :z-depth="4"
-    class="container-fuild"
-    style="margin-top: 10pt; min-height: 400pt"
-  >
-
-    <div style="margin:10pt 10pt 0 0">
+  <mu-paper :z-depth="4" class="container-fuild" style="margin-top: 10pt; min-height: 400pt">
+    <div style="margin:10pt 10pt 0 0; padding-top: 10pt">
       <div class="row">
         <!-- Term info, class choosing and exclude type choosing -->
         <div class="col col-lg-4">
-          <div style="padding: 3pt 10pt 10pt 10pt">
+          <div style="padding: 10pt">
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-              <term-choosing
-                v-model="term"
-                @changed="onTermChanged($event)"
-              ></term-choosing>
+              <term-choosing v-model="term" @changed="onTermChanged($event)"></term-choosing>
             </div>
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">教师</div>
-              <mu-select
-                v-model="selectedTeacher"
-                label="选择任课教师"
-                full-width
-                filterable
-              >
-                <mu-option
-                  v-for="teacherName in teacherList"
-                  :key="teacherName"
-                  :label="teacherName"
-                  :value="teacherName"
-                ></mu-option>
+              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable>
+                <mu-option v-for="name in teacherList" :key="name" :label="name" :value="name"></mu-option>
               </mu-select>
             </div>
           </div>
@@ -60,17 +42,10 @@
           </div>
 
           <div style="margin-top: 10pt">
-            <lesson-list
-              v-if="listMode"
-              :data="queryResult"
-              placeholder="选择教师与周以查看课程"
-            >
+            <lesson-list v-if="listMode" :data="queryResult" placeholder="选择教师与周以查看课程">
               <template slot-scope="scope">
                 <div>
-                  <mu-badge
-                    :content="scope.lesson.code"
-                    color="primary"
-                  ></mu-badge>
+                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -79,17 +54,10 @@
               </template>
             </lesson-list>
 
-            <lesson-week-page
-              v-else
-              :data="queryResult"
-              placeholder="选择教师与周以查看课程"
-            >
+            <lesson-week-page v-else :data="queryResult" placeholder="选择教师与周以查看课程">
               <template slot-scope="scope">
                 <div>
-                  <mu-badge
-                    :content="scope.lesson.code"
-                    color="primary"
-                  ></mu-badge>
+                  <mu-badge :content="scope.lesson.code" color="primary"></mu-badge>
                   {{scope.lesson.name}}（{{scope.lesson.classType}})
                 </div>
                 <div style="padding-left: 10pt">
@@ -144,7 +112,15 @@ export default {
       queryResult: []
     };
   },
+  onRouterUpdate(_, next) {
+    this.getCurrentTerm();
 
+    Utils.newRequest(`/api/term/${this.term}/teacher`).then(response => {
+      this.teacherList = response.data;
+    });
+
+    next();
+  },
   mounted() {
     this.getCurrentTerm();
 
@@ -183,6 +159,11 @@ export default {
         else if (calendar.term) return o.name === calendar.term;
         else return i === 0;
       });
+
+      if (this.currentTermInfo == null) {
+        this.currentTermInfo = termList[0];
+        Toast.error("没有当前校历的课程数据！");
+      }
 
       if (this.currentTermInfo == null) {
         Toast.error("没有学期数据");
