@@ -24,46 +24,67 @@
 </template>
 
 <script>
-export default {
-  name: "pc-staff-login",
+  import Utils from "@/commons/utils";
+  import sha256 from "js-sha256";
+  import Toast from "muse-ui-toast";
 
-  mounted() {},
+  const defaultToastSettings = {
+    theme: "primary",
+    position: "top-right",
+    duration: 1000,
+    icon: "info"
+  };
 
-  data() {
-    return {
-      loginForm: {
-        username: "",
-        password: ""
-      },
+  export default {
+    name: "pc-staff-login",
 
-      usernameRules: [
-        { validate: val => !!val, message: "用户名不能为空" },
-        {
-          validate: val => val.length >= 6,
-          message: "用户名太短"
-        }
-      ],
-      passwordRules: [
-        { validate: val => !!val, message: "密码不能为空" },
-        {
-          validate: val => val.length >= 6 && val.length <= 64,
-          message: "密码长度不在范围"
-        }
-      ]
-    };
-  },
+    mounted() {},
 
-  methods: {
-    submit() {
-      this.$refs.form.validate().then(r => {
-        if (r) {
-          console.log(r);
-        } else {
-        }
-      });
+    data() {
+      return {
+        loginForm: {
+          username: "",
+          password: ""
+        },
+
+        usernameRules: [
+          { validate: val => !!val, message: "用户名不能为空" },
+          {
+            validate: val => val.length >= 5,
+            message: "用户名太短"
+          }
+        ],
+        passwordRules: [
+          { validate: val => !!val, message: "密码不能为空" },
+          {
+            validate: val => val.length >= 6 && val.length <= 64,
+            message: "密码长度不在范围"
+          }
+        ]
+      };
+    },
+
+    methods: {
+      submit() {
+        this.$refs.form.validate().then(r => {
+          if (r) {
+            console.log(r);
+            Utils.requestWithBody("post", "api/auth?login", {
+              username: this.loginForm.username,
+              password: sha256(this.loginForm.password)
+            }).then(resp => {
+              if (resp.data.error) {
+                Toast.error("登录失败",defaultToastSettings);
+              } else {
+                Toast.success("登录成功",defaultToastSettings);
+                this.$router.push("/staff/home");
+              }
+            });
+          }
+        });
+      }
     }
-  }
-};
+  };
 </script>
 
 <style>

@@ -9,7 +9,8 @@
       </mu-button>
 
       <mu-button v-if="!appBarMeta.navBack && appBarMeta.userMenu" flat slot="right">
-        
+        <mu-icon left value="account_circle"></mu-icon>
+        <span>用户</span>
       </mu-button>
     </mu-appbar>
     <div class="container">
