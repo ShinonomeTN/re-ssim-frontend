@@ -1,15 +1,13 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
-import store from "@/store";
-
-import pcRouting from "./pc";
+import pcRouting from './pc';
 import staffRouting from "./staff";
 
 import Utils from "@/commons/utils";
 // import store from ""
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routeMapping = [
   // mode: 'hash|history|abstract',
@@ -17,9 +15,9 @@ const routeMapping = [
   // linkActiveClass: 'router-link-active',
   // scrollBehavior: fn
   {
-    path: "/",
-    beforeEnter(_, __, next) {
-      if (Utils.client.isPc) next("/pc");
+    path: '/',
+    beforeEnter(to, from, next) {
+      if (Utils.client.isPc) next("/pc")
       else next("/mobile");
     }
   },
@@ -32,31 +30,32 @@ const routeMapping = [
 
   // Error
   {
-    path: "error",
+    path: 'error',
     component: {
-      template: "<div>Ooops, something goes wrong.</div>"
+      template: '<div>Ooops, something goes wrong.</div>'
     }
   },
 
   // 404 置后
   {
-    path: "*",
+    path: '*',
     component: {
-      template: "<div>Ooops, nothing here</div>"
+      // beforeCreate() {
+      //   window.swal({
+      //     type: 'warning',
+      //     title: '功能或页面不存在',
+      //     timer: 1500,
+      //     showConfirmButton: false
+      //   })
+      //   this.$router.replace('/')
+      // },
+      template: '<div>Ooops, nothing here</div>'
     }
   }
-];
+]
 
 const router = new VueRouter({
   routes: routeMapping
-});
-
-// Route meta handler
-router.beforeEach((to, form, next) => {
-  const appBarState = to.meta ? to.meta.appBar : null;
-  if (appBarState) store.commit("pushAppBarMeta", appBarState);
-
-  next();
 });
 
 export default router;

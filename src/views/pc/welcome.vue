@@ -97,6 +97,47 @@ export default {
         this.$router.push("/staff");
         this.loginCounter = 0;
       }
+
+      this.backToFunctionList();
+    },
+
+    backToFunctionList() {
+      this.menuState = "select_function";
+    },
+
+    /**
+     *
+     * Helper methos
+     *
+     */
+    _updateHistoriesList() {
+      this.isLoadingTermHistories = true;
+
+      Utils.newRequest("/api/term")
+        .then(r => {
+          if (!r.data || r.data.length <= 0) {
+            this._handleEmptyHistories();
+            return;
+          }
+
+          this.termHistories = r.data;
+        })
+        .catch(error => {
+          if(error.response){
+            UX.toastWarning("获取数据错误");
+            this.backToFunctionList();
+
+            console.log(error);
+          }
+        })
+        .then(() => {
+          this.isLoadingTermHistories = false;
+        });
+    },
+
+    _handleEmptyHistories() {
+      UX.toastWarning("无历史数据");
+      this.backToFunctionList();
     }
   }
 };
@@ -104,7 +145,7 @@ export default {
 
 <style scoped>
 .center-container {
-  padding-top: 10pt;
+  padding-top: 10pt; 
   padding-bottom: 10pt;
 }
 </style>
