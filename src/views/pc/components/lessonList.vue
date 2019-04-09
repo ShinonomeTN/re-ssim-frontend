@@ -1,8 +1,16 @@
 <template>
   <div>
     <!-- Full list view -->
-    <div v-if="data && data.length > 0" class="ll-container">
-      <day-item v-for="weekdayIndex in weekdayMax" :key="weekdayIndex" :weekday="weekMapping[weekdayIndex - 1]" :data="getDayLessons(weekdayIndex)">
+    <div
+      v-if="data && data.length > 0"
+      class="ll-container"
+    >
+      <day-item
+        v-for="weekdayIndex in weekdayMax"
+        :key="weekdayIndex"
+        :weekday="weekMapping[weekdayIndex - 1]"
+        :data="getDayLessons(weekdayIndex)"
+      >
         <template slot-scope="scope">
           <slot v-bind:lesson="scope.lesson">
             {{scope.lesson}}
@@ -11,19 +19,21 @@
       </day-item>
     </div>
 
-    <div class="mupaper mupaper-round mu-elevation-1" v-else>
+    <div
+      class="mupaper mupaper-round mu-elevation-1"
+      v-else
+    >
       <div style="padding: 10pt">{{placeholder}}</div>
     </div>
   </div>
 </template>
 
 <script>
-
 import WeekdayBar from "@/components/weekdayBar";
 import DayItem from "./lessonListDayItem";
 
 export default {
-  name : "pc-lesson-list",
+  name: "pc-lesson-list",
 
   props: {
     data: {
@@ -42,8 +52,8 @@ export default {
     }
   },
 
-  components : {
-    "day-item" : DayItem
+  components: {
+    "day-item": DayItem
   },
 
   methods: {
@@ -51,23 +61,22 @@ export default {
       const data = this.data;
       var result = {};
 
-      for(var i = 0; i < data.length; i++) {
+      for (var i = 0; i < data.length; i++) {
         const item = data[i];
-        if(item.timePoint.day === day) {
+        if (item.timePoint.day === day) {
           result[`${item.timePoint.turn}`] = item.lessons;
         }
       }
 
-      return result
+      return result;
     }
   },
 
   computed: {
-    weekMapping: () => ["一", "二", "三", "四", "五", "六", "日"],
+    weekMapping: () => ["一", "二", "三", "四", "五", "六", "日"]
   }
 };
 </script>
 
 <style scoped>
-
 </style>

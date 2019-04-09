@@ -5,6 +5,7 @@ import pcRouting from './pc';
 import staffRouting from "./staff";
 
 import Utils from "@/commons/utils";
+// import store from ""
 
 Vue.use(VueRouter)
 

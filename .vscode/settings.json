@@ -1,0 +1,33 @@
+{
+  "auto-rename-tag.activationOnLanguage": [
+    "html",
+    "xml",
+    "php",
+    "javascript"
+    // "vue"
+  ],
+
+  //
+  // Web frontend developing settings
+  //
+  "eslint.validate": ["javascript", "javascriptreact", "vue"],
+
+  // "vetur.format.defaultFormatter.html": "prettier",
+
+  // "prettier.eslintIntegration": true,
+
+  "editor.tabSize": 2,
+
+  // "vetur.format.defaultFormatter.html": "js-beautify-html",
+  "vetur.format.defaultFormatterOptions": {
+    "js-beautify-html": {
+      "wrap_attributes": "auto"
+    },
+    "prettyhtml": {
+      "printWidth": 120,
+      "singleQuote": false,
+      "wrapAttributes": false,
+      "sortAttributes": false
+    }
+  }
+}

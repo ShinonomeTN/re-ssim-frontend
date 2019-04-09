@@ -3,6 +3,7 @@ import Utils from "@/commons/utils";
 export default {
   path: "/pc",
   component: require("@/views/pc/"),
+  // alias: "/",
   children: [
     //
     // Errors
@@ -23,7 +24,7 @@ export default {
           .then((result) => {
             let data = result.data;
 
-            if (!data.ping === "pong") alert("WTF? API CHANGED!");
+            if (data.ping !== "pong") alert("WTF? API CHANGED!");
 
             if (!data.db_available) {
               next("/pc/db_empty")
@@ -55,12 +56,24 @@ export default {
     {
       path: "term/:term/class",
       component: resolve => require(["@/views/pc/classQuery"], resolve),
-      props: true
+      props: true,
+      meta: {
+        appBar: {
+          title: "班级课表查询",
+          navBack: true
+        }
+      }
     },
     {
       path: "term/:term/teacher",
       component: resolve => require(["@/views/pc/teacherQuery"], resolve),
-      props: true
+      props: true,
+      meta: {
+        appBar: {
+          title: "教师课表查询",
+          navBack: true
+        }
+      }
     }
   ]
 };

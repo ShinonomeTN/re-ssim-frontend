@@ -1,27 +1,36 @@
-var webpack = require("webpack"),
-  ENV = require("./config/ENV"),
-  PATHS = require("./config/PATHS"),
-  styleRules = require("./config/style-rules"),
-  HtmlWebpackPlugin = require("html-webpack-plugin"),
-  NyanProgressPlugin = require("nyan-progress-webpack-plugin");
+var webpack = require("webpack");
+
+//
+// Get current develop environment
+//
+const Environment = require("./config/ENV");
+const Path = require("./config/PATHS");
+
+const styleRules = require("./config/style-rules");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const NyanProgressPlugin = require("nyan-progress-webpack-plugin");
 
 module.exports = {
   entry: {
-    app: PATHS.SRC.join("app.js")
+    app: Path.SRC.join("app.js")
   },
+  
   // devtool - source map 配置详见 https://webpack.js.org/configuration/devtool
   devtool: false,
+  
   output: {
-    path: PATHS.DIST,
+    path: Path.DIST,
     publicPath: ""
   },
+  
   resolve: {
     extensions: [".js", ".vue", ".json"],
     alias: {
       vue$: "vue/dist/vue.esm.js",
-      "@": PATHS.SRC
+      "@": Path.SRC
     }
   },
+
   module: {
     rules: [
       //   {
@@ -37,13 +46,13 @@ module.exports = {
         test: /\.vue$/,
         loader: "vue-loader",
         options: {
-          loaders: styleRules.vueLoader
+          loaders: styleRules.vueStyleRuleLoaders
         }
       },
       {
         test: /\.js$/,
         loader: "babel-loader?cacheDirectory",
-        include: PATHS.SRC
+        include: Path.SRC
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
@@ -61,27 +70,31 @@ module.exports = {
           name: "fonts/[name]-[hash:6].[ext]"
         }
       }
-    ].concat(styleRules.basic)
+    ].concat(styleRules.basicStyleRuleLoaders)
   },
+
   plugins: [
     new NyanProgressPlugin(), // 进度条
+
     new webpack.DefinePlugin(
       Object.assign(
         {
-          "process.env.NODE_ENV": JSON.stringify(ENV.__ENV__)
+          "process.env.NODE_ENV": JSON.stringify(Environment.current)
         },
-        ENV
+        Environment
       )
     ),
+    
     new webpack.optimize.CommonsChunkPlugin({
       name: "vendor",
       minChunks: function(module) {
         return module.context && module.context.indexOf("node_modules") !== -1;
       }
     }),
+    
     new HtmlWebpackPlugin({
       filename: "index.html",
-      template: PATHS.SRC.join("index.html")
+      template: Path.SRC.join("index.html")
     })
   ]
 };

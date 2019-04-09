@@ -1,104 +1,62 @@
 <template>
-  <mu-container style="margin-top:100pt">
-    <div class="col-md-12 col-lg-8 offset-lg-2 ">
-      <mu-paper :z-depth='1'>
-        <mu-appbar style="width: 100%;" title="简单课表查询" color="primary">
-          <mu-button icon slot="left">
-            <mu-icon value="event"></mu-icon>
-          </mu-button>
-          <mu-button flat slot="right" v-if="menuState === 'select_history'" @click="backToFunctionList()">
-            <mu-icon left value="arrow_back"></mu-icon>
-            返回
-          </mu-button>
-        </mu-appbar>
+  <mu-container style="margin-top:60pt">
+    <div class="row">
+      <div class="col-md-7 col-lg-8"></div>
+      <div class="col-md-5 col-lg-4">
+        <mu-paper :z-depth="1" style="padding: 10pt; margin-bottom: 10pt" round>
+          <school-calendar :calendar="this.$store.state.calendar"></school-calendar>
+        </mu-paper>
 
-        <!-- Select function  -->
-        <div class="container-fluid center-container" v-if="menuState === 'select_function'">
-          <div class="row align-items-center">
-            <mu-col span="6">
-              <div v-if="!term">
-                <h1 style="text-align:center">{{currentTerm}}<br>
-                  <small>{{`7 月 1 日，第${termWeek} 星期一`}}</small>
-                </h1>
-              </div>
-              <div v-else>
-                <h1 style="text-align:center">{{currentTerm}}<br>
-                  <small>历史学期</small>
-                </h1>
-              </div>
-            </mu-col>
-            <mu-col span='6' style="border-left: 1pt solid lightgray;">
-              <div>
-                <mu-list>
-                  <mu-list-item button v-for="(item,index) in functionList" :key="index" @click="$router.push(item.to(currentTerm))" class="list-group-item">
-                    <mu-list-item-action>
-                      <mu-icon :value="item.icon"></mu-icon>
-                    </mu-list-item-action>
-                    <mu-list-item-title>{{item.title}}</mu-list-item-title>
-                  </mu-list-item>
-                  <mu-list-item button @click="enterSelectTerm()" class="list-group-item">
-                    <mu-list-item-action>
-                      <mu-icon value="history"></mu-icon>
-                    </mu-list-item-action>
-                    <mu-list-item-title>历史学期</mu-list-item-title>
-                  </mu-list-item>
-                </mu-list>
-              </div>
-            </mu-col>
-          </div>
-        </div>
+        <mu-paper :z-depth="1" style="margin-bottom: 10pt">
+          <mu-list>
+            <mu-list-item
+              button
+              v-for="(item,index) in functionList"
+              :key="index"
+              @click="$router.push(item.to(currentTerm))"
+              class="list-group-item"
+            >
+              <mu-list-item-action>
+                <mu-icon :value="item.icon"></mu-icon>
+              </mu-list-item-action>
+              <mu-list-item-title>{{item.title}}</mu-list-item-title>
+            </mu-list-item>
+          </mu-list>
+        </mu-paper>
 
-        <!-- Select history -->
-        <div class="container-fluid center-container" v-if="menuState === 'select_history'">
-          <div class="row align-items-center">
-            <mu-col span="6" style="text-align:center">
-              <mu-icon value="history" size="56" center></mu-icon>
-              <h1 style="margin-top:0">选择历史学期</h1>
-            </mu-col>
-            <mu-col span='6' style="border-left: 1pt solid lightgray;">
-              <div align="center">
-                <mu-circular-progress class="demo-circular-progress " :size="56" v-if="isLoadingTermHistories"></mu-circular-progress>
-                <div v-else style="height:208px; overflow-y: auto">
-                  <mu-list>
-                    <mu-list-item button v-for="(item,index) in termHistories" :key="index" @click="toTerm(item.name)" class="list-group-item">
-                      <mu-list-item-action v-if="item.name === currentTerm">
-                        <mu-badge content="当前" color="primary"></mu-badge>
-                      </mu-list-item-action>
-                      <mu-list-item-title>{{item.name}}</mu-list-item-title>
-                      <mu-list-item-action>
-                        <mu-badge :content="`${item.courseCount}`" color="secondary"></mu-badge>
-                      </mu-list-item-action>
-                    </mu-list-item>
-                  </mu-list>
-                </div>
-              </div>
-            </mu-col>
-          </div>
-        </div>
-      </mu-paper>
+        <mu-paper :z-depth="1">
+          <mu-list>
+            <mu-list-item button :ripple="false" class="list-group-item" @click="login()">
+              <mu-list-item-action>
+                <mu-icon value="info"></mu-icon>
+              </mu-list-item-action>
+              <mu-list-item-title>共 {{termList.length}} 个学期的数据</mu-list-item-title>
+            </mu-list-item>
+          </mu-list>
+        </mu-paper>
+      </div>
     </div>
   </mu-container>
 </template>
 
 <script>
 import Utils from "@/commons/utils";
-import UX from "@/commons/ux";
+import Toast from "muse-ui-toast";
+
+import SchoolCalendar from "@/components/schoolCalendar";
 
 export default {
   name: "pc-welcome",
 
-  props: {
-    term: String
+  components: {
+    SchoolCalendar
   },
 
-  data: () => {
+  mounted() {},
+
+  data() {
     return {
-      termWeek: "二十周",
-
-      menuState: "select_function",
-
-      termHistories: [],
-      isLoadingTermHistories: false,
+      loginCounter: 0,
 
       // The function menu
       functionList: [
@@ -122,26 +80,22 @@ export default {
   },
 
   computed: {
-    currentTerm: () => (this.term ? this.term : "2017-2018学年第二学期")
+    currentTerm() {
+      return this.$store.state.calendar.term;
+    },
+
+    termList() {
+      return this.$store.state.courseTermList;
+    }
   },
 
   methods: {
-    //
-    // UI status changing
-    //
-    enterSelectTerm() {
-      this.menuState = "select_history";
-
-      if (this.termHistories.length <= 0) {
-        this._updateHistoriesList();
-      }
-    },
-
-    toTerm(termName) {
-      if (termName === this.currentTerm) {
-        this.$router.push("/pc/current");
+    login() {
+      if (this.loginCounter < 7) {
+        this.loginCounter++;
       } else {
-        this.$router.push(`/pc/term/${termName}`);
+        this.$router.push("/staff");
+        this.loginCounter = 0;
       }
 
       this.backToFunctionList();

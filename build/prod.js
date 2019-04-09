@@ -1,11 +1,11 @@
-var fs = require('fs-extra'),
-  webpack = require('webpack'),
-  gulp = require('./gulpfile'),
-  PATHS = require('./config/PATHS'),
-  config = require('./webpack.prod.conf');
+const fs = require('fs-extra');
+const webpack = require('webpack');
+const gulp = require('./gulpfile');
+const Path = require('./config/PATHS');
+const config = require('./webpack.prod.conf');
 
-fs.emptyDirSync(PATHS.DIST); // 清空 build 目录
-fs.copySync(PATHS.STATIC, PATHS.DIST.join('static')); // 复制高度静态资源
+fs.emptyDirSync(Path.DIST); // 清空 build 目录
+fs.copySync(Path.STATIC, Path.DIST.join('static')); // 复制高度静态资源
 
 webpack(config, function(err, stats) {
   // show build info to console

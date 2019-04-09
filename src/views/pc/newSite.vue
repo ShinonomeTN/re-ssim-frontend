@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import UX from "@/commons/ux";
+import Toast from 'muse-ui-toast';
 
 const colors = ["secondary", "primary", "success", "warning", "info", "error"];
 
@@ -36,18 +36,18 @@ export default {
 
       switch (this.counter) {
         case 10:
-          UX.toast(`OwO +${this.counter} `, defaultToastSettings);
+          Toast.info(`OwO +${this.counter} `, defaultToastSettings);
           break;
         case 50:
-          UX.toast(`O_o +${this.counter} `, defaultToastSettings);
+          Toast.info(`O_o +${this.counter} `, defaultToastSettings);
           break;
         case 100:
-          UX.toast(`咕咕 +${this.counter}`, defaultToastSettings);
+          Toast.info(`咕咕 +${this.counter}`, defaultToastSettings);
           this.counter = 0;
           break;
         default:
           if (this.counter % 5 === 0) {
-            UX.toast(`+${this.counter}`, defaultToastSettings);
+            Toast.info(`+${this.counter}`, defaultToastSettings);
             this.$router.push("/");
           }
           break;

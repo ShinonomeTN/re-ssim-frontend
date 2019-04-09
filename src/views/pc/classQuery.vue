@@ -83,14 +83,15 @@
 
 <script>
 import Utils from "@/commons/utils";
-import axios from "axios";
+import Toast from "muse-ui-toast";
 
 import WeekBar from "@/components/weekBar";
 
-import ClassChoosing from "./classQuery/classChoosing";
+import ClassChoosing from "./components/classChoosing";
+import TermChoosing from "./components/termChoosing";
 
-import LessonList from "./classQuery/lessonList";
-import LessonWeekPage from "./classQuery/lessonWeekPage";
+import LessonList from "./components/lessonList";
+import LessonWeekPage from "./components/lessonWeekPage";
 
 export default {
   name: "pc-class-query",
@@ -99,7 +100,8 @@ export default {
     WeekBar,
     ClassChoosing,
     LessonList,
-    LessonWeekPage
+    LessonWeekPage,
+    TermChoosing
   },
 
   props: {
@@ -108,12 +110,10 @@ export default {
 
   data: () => {
     return {
+      currentTermInfo: {},
+
       listMode: false,
 
-      classList: [],
-
-      maxWeek: 0,
-      minWeek: 0,
       activatedWeekList: [],
 
       // Course type
@@ -129,21 +129,13 @@ export default {
     };
   },
 
+  beforeRouterUpdate(_, next) {
+    this.getCurrentTerm();
+    next();
+  },
+
   mounted() {
-    console.log(`${this.maxWeek} <- ${this.minWeek}`);
-
-    Utils.newRequest(`/api/term/${this.term}?class`).then(response => {
-      this.classList = response.data.classes;
-    });
-
-    Utils.newRequest(`/api/term/${this.term}?weekRange`).then(response => {
-      this.maxWeek = response.data.max;
-      this.minWeek = response.data.min;
-    });
-
-    Utils.newRequest(`/api/term/${this.term}?classType`).then(response => {
-      this.courseTypeList = response.data.classTypes;
-    });
+    this.getCurrentTerm();
   },
 
   watch: {

@@ -9,7 +9,14 @@
       <div class="row">
         <div class="col-sm-3">
           <mu-list :value="currentCourse">
-            <mu-list-item button class="list-group-item" :value="key" @click="currentCourse = key" v-for="(unit,key) in courseList" :key="key">
+            <mu-list-item
+              button
+              class="list-group-item"
+              :value="key"
+              @click="currentCourse = key"
+              v-for="(unit,key) in courseList"
+              :key="key"
+            >
               <mu-list-item-title>{{key}}</mu-list-item-title>
             </mu-list-item>
           </mu-list>
@@ -27,20 +34,24 @@
                 <div>类型 : {{item.classType}}</div>
               </div>
             </div>
-            <div class="panel-body" v-if="!(currentCourse && courseList[currentCourse])">
+            <div
+              class="panel-body"
+              v-if="!(currentCourse && courseList[currentCourse])"
+            >
               空
             </div>
           </div>
-        </div>
+        </mu-paper>
       </div>
     </div>
-  </mu-paper>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
+import Utils from "@/commons/utils";
 
-const groupBy = $ressim.collections.groupBy;
+const groupBy = window.$ressim.collections.groupBy;
 
 export default {
   name: "pc-course-list",
@@ -55,9 +66,12 @@ export default {
       currentCourse: ""
     };
   },
+
   mounted() {
-    axios.get(`/api/term/${this.term}?course`).then(response => {
-      this.courseList = groupBy(response.data, "unit");
+    Utils.newRequest(`/api/term/${this.term}/course`).then(r => {
+      const data = r.data;
+      console.log(data);
+      this.courseList = groupBy(data, "unit");
     });
   }
 };

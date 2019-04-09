@@ -18,13 +18,13 @@
           <div style="padding: 3pt 10pt 10pt 10pt">
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">当前学期</div>
-              <mu-button full-width>{{term}}</mu-button>
+              <term-choosing v-model="term" @changed="onTermChanged($event)"></term-choosing>
             </div>
 
             <div>
               <div style="padding:5pt 0pt; font-size: 17px">教师</div>
-              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable @change="onTeacherChanged()">
-                <mu-option v-for="teacherName in teacherList" :key="teacherName" :label="teacherName" :value="teacherName"></mu-option>
+              <mu-select v-model="selectedTeacher" label="选择任课教师" full-width filterable>
+                <mu-option v-for="name in teacherList" :key="name" :label="name" :value="name"></mu-option>
               </mu-select>
             </div>
           </div>
@@ -70,10 +70,13 @@
 
 <script>
 import Utils from "@/commons/utils";
+import Toast from "muse-ui-toast";
 
 import WeekBar from "@/components/weekBar";
-import LessonList from "./classQuery/lessonList";
-import LessonWeekPage from "./classQuery/lessonWeekPage";
+import LessonList from "./components/lessonList";
+import LessonWeekPage from "./components/lessonWeekPage";
+
+import TermChoosing from "./components/termChoosing";
 
 export default {
   name: "pc-teacher-query",
@@ -85,19 +88,19 @@ export default {
   components: {
     WeekBar,
     LessonList,
-    LessonWeekPage
+    LessonWeekPage,
+    TermChoosing
   },
 
   data() {
     return {
       listMode: false,
 
-      teacherList: [],
-      courseTypeList: [],
-      activatedWeeks: [],
+      currentTermInfo: {},
 
-      maxWeek: 0,
-      minWeek: 0,
+      teacherList: [],
+      // courseTypeList: [],
+      activatedWeeks: [],
 
       selectedTeacher: "",
       selectedWeek: 0,
@@ -105,15 +108,20 @@ export default {
       queryResult: []
     };
   },
+  onRouterUpdate(_, next) {
+    this.getCurrentTerm();
 
-  mounted() {
-    Utils.newRequest(`/api/term/${this.term}?teacher`).then(response => {
-      this.teacherList = response.data.teachers;
+    Utils.newRequest(`/api/term/${this.term}/teacher`).then(response => {
+      this.teacherList = response.data;
     });
 
-    Utils.newRequest(`/api/term/${this.term}?weekRange`).then(response => {
-      this.maxWeek = response.data.max;
-      this.minWeek = response.data.min;
+    next();
+  },
+  mounted() {
+    this.getCurrentTerm();
+
+    Utils.newRequest(`/api/term/${this.term}/teacher`).then(response => {
+      this.teacherList = response.data;
     });
   },
 
@@ -126,14 +134,31 @@ export default {
   // },
 
   methods: {
-    onTeacherChanged() {
-      Utils.newRequest(
-        `/api/term/${this.term}/teacher/${this.selectedTeacher}/weeks`
-      ).then(resp => {
-        this.activatedWeeks = resp.data.weeks;
-        if (!!this.selectedTeacher && !!this.selectedWeek)
-          this.query(this.selectedTeacher, this.selectedWeek);
+    getCurrentTerm() {
+      const termList = this.$store.state.courseTermList;
+      if (termList.size === 0) {
+        Toast.error("没有学期数据");
+        this.$router.push("/");
+        return;
+      }
+
+      const calendar = this.$store.state.calendar;
+      this.currentTermInfo = termList.find((o, i, a) => {
+        if (this.term) return o.name === this.term;
+        else if (calendar.term) return o.name === calendar.term;
+        else return i === 0;
       });
+
+      if (this.currentTermInfo == null) {
+        this.currentTermInfo = termList[0];
+        Toast.error("没有当前校历的课程数据！");
+      }
+
+      if (this.currentTermInfo == null) {
+        Toast.error("没有学期数据");
+        this.$router.push("/");
+        return;
+      }
     },
 
     query(teacherName, week) {
@@ -142,10 +167,8 @@ export default {
       ).then(resp => (this.queryResult = resp.data));
     },
 
-    onWeekChanged(week) {
-      this.selectedWeek = week;
-      if (!!this.selectedTeacher && !!this.selectedWeek)
-        this.query(this.selectedTeacher, this.selectedWeek);
+    onTermChanged(term) {
+      this.$router.push(`/pc/term/${term}/teacher`);
     }
   }
 };
